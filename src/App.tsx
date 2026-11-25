@@ -1,18 +1,19 @@
 import {
   ArrowRight,
   ArrowUp,
-  Check,
-  Copy,
-  Github,
-  Instagram,
-  Mail,
+  RefreshCw,
   Search,
   Send,
-  Twitter,
 } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ControlDock } from './components/ControlDock.tsx';
-import { CryptoQrCode } from './components/CryptoQrCode.tsx';
+import { ArchitectureSmartArt } from './components/ArchitectureSmartArt.tsx';
+import {
+  EmailLogo,
+  FacebookLogo,
+  GitHubLogo,
+  InstagramLogo,
+  LinkedInLogo,
+} from './components/BrandMarks.tsx';
 import { Navbar } from './components/Navbar.tsx';
 import { ProjectCard } from './components/ProjectCard.tsx';
 import { ProjectModal } from './components/ProjectModal.tsx';
@@ -37,7 +38,7 @@ const SECTION_ACCENTS: Record<SectionId, string> = {
   hire: '#ec4899',
 };
 
-const CATEGORIES: ProjectCategory[] = ['All', '3D Web', 'Full-Stack', 'Systems UI'];
+const CATEGORIES: ProjectCategory[] = ['All', 'Full-Stack', 'Mobile & P2P', '3D Web'];
 
 const SERVICE_OPTIONS = [
   'Full-Stack Web Engineering',
@@ -46,16 +47,52 @@ const SERVICE_OPTIONS = [
   'Technical Consultation',
 ];
 
-const BUDGET_OPTIONS = [
-  '$500 – $1,500',
-  '$1,500 – $4,000',
-  '$4,000 – $10,000',
-  '$10,000+',
+const TIMELINE_OPTIONS = [
+  '2–4 Weeks',
+  '1–2 Months',
+  'Ongoing Collaboration',
+  'Flexible',
 ];
 
-const CRYPTO_ADDRESS = '0x71C7656EC7ab88b098defB751B7401B5f6d8976F';
-const MPESA_NUMBER = '0714 151 943';
-const MPESA_PAYBILL = '123456';
+const CONTACT_EMAIL = 'codahabiude@gmail.com';
+
+const SOCIAL_CHANNELS = [
+  {
+    name: 'GitHub',
+    handle: '@codahabiude',
+    href: 'https://github.com/codahabiude',
+    Logo: GitHubLogo,
+    external: true,
+  },
+  {
+    name: 'LinkedIn',
+    handle: 'Codah Abiude',
+    href: 'https://www.linkedin.com/in/codah-abiude-a67360447/',
+    Logo: LinkedInLogo,
+    external: true,
+  },
+  {
+    name: 'Instagram',
+    handle: '@codahabiude',
+    href: 'https://www.instagram.com/codahabiude/',
+    Logo: InstagramLogo,
+    external: true,
+  },
+  {
+    name: 'Facebook',
+    handle: 'Codah Abiude',
+    href: 'https://www.facebook.com/profile.php?id=61596615431262',
+    Logo: FacebookLogo,
+    external: true,
+  },
+  {
+    name: 'Email',
+    handle: CONTACT_EMAIL,
+    href: `mailto:${CONTACT_EMAIL}`,
+    Logo: EmailLogo,
+    external: false,
+  },
+];
 
 interface ToastItem {
   id: number;
@@ -63,18 +100,21 @@ interface ToastItem {
   tone: 'success' | 'error';
 }
 
+const DEFAULT_SCENE_CONTROLS: SceneControlState = {
+  explodeFactor: 0,
+  speedMode: 'cruising',
+  spectrumMode: 'section',
+  wireframeOverlay: true,
+};
+
 export default function App() {
   const [activeSection, setActiveSection] = useState<SectionId>('home');
-  const [sceneControls, setSceneControls] = useState<SceneControlState>({
-    explodeFactor: 0,
-    speedMode: 'cruising',
-    spectrumMode: 'section',
-    wireframeOverlay: true,
-  });
 
   const [projects, setProjects] = useState<PortfolioProject[]>([]);
   const [services, setServices] = useState<ServiceItem[]>([]);
   const [capabilities, setCapabilities] = useState<CapabilityMetric[]>([]);
+  const [githubProfile, setGithubProfile] = useState('https://github.com/codahabiude');
+  const [syncingGithub, setSyncingGithub] = useState(false);
   const [loadingPortfolio, setLoadingPortfolio] = useState(true);
   const [portfolioError, setPortfolioError] = useState<string | null>(null);
 
@@ -86,7 +126,7 @@ export default function App() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [service, setService] = useState(SERVICE_OPTIONS[0]);
-  const [budget, setBudget] = useState(BUDGET_OPTIONS[1]);
+  const [timeline, setTimeline] = useState(TIMELINE_OPTIONS[0]);
   const [details, setDetails] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [submissionResult, setSubmissionResult] = useState<InquirySubmissionResult | null>(
@@ -101,7 +141,6 @@ export default function App() {
 
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [toasts, setToasts] = useState<ToastItem[]>([]);
-  const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
   const sectionRefs = useRef<Record<SectionId, HTMLElement | null>>({
     home: null,
@@ -119,22 +158,34 @@ export default function App() {
     }, 3200);
   }, []);
 
-  const loadPortfolio = useCallback(async () => {
-    setLoadingPortfolio(true);
-    setPortfolioError(null);
-    try {
-      const res = await fetch('/api/portfolio');
-      if (!res.ok) throw new Error('Unable to load portfolio data');
-      const data = (await res.json()) as PortfolioPayload;
-      setProjects(data.projects);
-      setServices(data.services);
-      setCapabilities(data.capabilities);
-    } catch {
-      setPortfolioError('Could not connect to portfolio API. Please retry.');
-    } finally {
-      setLoadingPortfolio(false);
-    }
-  }, []);
+  const loadPortfolio = useCallback(
+    async (forceSync = false) => {
+      if (forceSync) setSyncingGithub(true);
+      else setLoadingPortfolio(true);
+      setPortfolioError(null);
+      try {
+        const url = forceSync ? '/api/portfolio?sync=1' : '/api/portfolio';
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('Unable to load portfolio data');
+        const data = (await res.json()) as PortfolioPayload;
+        setProjects(data.projects);
+        setServices(data.services);
+        setCapabilities(data.capabilities);
+        if (data.githubProfile) setGithubProfile(data.githubProfile);
+        if (forceSync) pushToast('Synced repositories from github.com/codahabiude.');
+      } catch {
+        if (forceSync) {
+          pushToast('GitHub sync could not reach api.github.com right now.', 'error');
+        } else {
+          setPortfolioError('Could not connect to portfolio API. Please retry.');
+        }
+      } finally {
+        setLoadingPortfolio(false);
+        setSyncingGithub(false);
+      }
+    },
+    [pushToast]
+  );
 
   useEffect(() => {
     loadPortfolio();
@@ -142,11 +193,8 @@ export default function App() {
 
   // Update CSS --accent token dynamically
   useEffect(() => {
-    let accent = SECTION_ACCENTS[activeSection];
-    if (sceneControls.spectrumMode === 'emerald') accent = '#00ff88';
-    if (sceneControls.spectrumMode === 'cobalt') accent = '#00ccff';
-    document.documentElement.style.setProperty('--accent', accent);
-  }, [activeSection, sceneControls.spectrumMode]);
+    document.documentElement.style.setProperty('--accent', SECTION_ACCENTS[activeSection]);
+  }, [activeSection]);
 
   // Track active section on scroll + Scroll-to-top visibility
   useEffect(() => {
@@ -236,17 +284,6 @@ export default function App() {
     navigateTo('hire');
   };
 
-  const handleCopy = async (key: string, value: string, label: string) => {
-    try {
-      await navigator.clipboard.writeText(value);
-      setCopiedKey(key);
-      pushToast(`${label} copied to clipboard.`);
-      window.setTimeout(() => setCopiedKey(null), 1800);
-    } catch {
-      pushToast('Clipboard access unavailable. Please copy manually.', 'error');
-    }
-  };
-
   const handleInquirySubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (submitting) return;
@@ -255,7 +292,7 @@ export default function App() {
       const res = await fetch('/api/inquiries', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, service, budget, details }),
+        body: JSON.stringify({ name, email, service, timeline, details }),
       });
       const payload = await res.json();
       if (!res.ok) {
@@ -301,7 +338,7 @@ export default function App() {
   return (
     <div className="relative min-h-screen bg-[#050507] text-[#F2F4F8]">
       {/* Real-time Three.js 3D Viewport */}
-      <ThreePortfolioScene activeSection={activeSection} controls={sceneControls} />
+      <ThreePortfolioScene activeSection={activeSection} controls={DEFAULT_SCENE_CONTROLS} />
 
       {/* Top Navigation */}
       <Navbar activeSection={activeSection} onNavigate={navigateTo} />
@@ -309,7 +346,7 @@ export default function App() {
       {/* Toast Notifications */}
       <div
         aria-live="polite"
-        className="fixed bottom-24 right-4 sm:right-8 z-50 flex flex-col gap-2 pointer-events-none"
+        className="fixed bottom-6 right-4 sm:right-8 z-50 flex flex-col gap-2 pointer-events-none"
       >
         {toasts.map((toast) => (
           <div
@@ -331,14 +368,14 @@ export default function App() {
           type="button"
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           aria-label="Scroll to top"
-          className="fixed bottom-20 right-5 z-30 w-11 h-11 rounded-full bg-[#0b0d14] border border-white/20 text-white hover:border-[var(--accent)] hover:text-[var(--accent)] flex items-center justify-center transition-colors shadow-lg"
+          className="fixed bottom-6 right-5 z-30 w-11 h-11 rounded-full bg-[#0b0d14] border border-white/20 text-white hover:border-[var(--accent)] hover:text-[var(--accent)] flex items-center justify-center transition-colors shadow-lg"
         >
           <ArrowUp className="w-4 h-4" />
         </button>
       )}
 
       {/* Main Content */}
-      <main className="relative z-10 max-w-[1360px] mx-auto px-4 sm:px-8 pt-24 pb-36">
+      <main className="relative z-10 max-w-[1360px] mx-auto px-4 sm:px-8 pt-24 pb-20">
         {/* === HOME HERO SECTION === */}
         <section
           id="home"
@@ -492,41 +529,57 @@ export default function App() {
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
             <div>
               <p className="text-xs font-medium text-[var(--accent)] mb-2">
-                Selected Works
+                GitHub Repositories · github.com/codahabiude
               </p>
               <h2 className="font-display text-3xl sm:text-4xl font-bold text-white">
-                Case Studies &amp; Spatial Builds
+                Selected Works &amp; Open Repositories
               </h2>
             </div>
 
-            <div
-              role="group"
-              aria-label="Filter projects by discipline"
-              className="inline-flex flex-wrap items-center gap-1 p-1 rounded-xl bg-[#0b0d14] border border-white/12 self-start"
-            >
-              {CATEGORIES.map((category) => (
-                <button
-                  key={category}
-                  type="button"
-                  onClick={() => setSelectedCategory(category)}
-                  className={`px-3.5 py-2 text-xs font-medium rounded-lg transition-colors whitespace-nowrap shrink-0 ${
-                    selectedCategory === category
-                      ? 'bg-white text-[#050507]'
-                      : 'text-slate-300 hover:text-white'
-                  }`}
-                >
-                  {category}
-                </button>
-              ))}
+            <div className="flex flex-wrap items-center gap-3 self-start">
+              <div
+                role="group"
+                aria-label="Filter projects by discipline"
+                className="inline-flex flex-wrap items-center gap-1 p-1 rounded-xl bg-[#0b0d14] border border-white/12"
+              >
+                {CATEGORIES.map((category) => (
+                  <button
+                    key={category}
+                    type="button"
+                    onClick={() => setSelectedCategory(category)}
+                    className={`px-3.5 py-2 text-xs font-medium rounded-lg transition-colors whitespace-nowrap shrink-0 ${
+                      selectedCategory === category
+                        ? 'bg-white text-[#050507]'
+                        : 'text-slate-300 hover:text-white'
+                    }`}
+                  >
+                    {category}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                type="button"
+                onClick={() => loadPortfolio(true)}
+                disabled={syncingGithub}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-[#0b0d14] border border-white/15 text-xs font-medium text-slate-200 hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors whitespace-nowrap shrink-0 disabled:opacity-60"
+              >
+                <RefreshCw
+                  className={`w-3.5 h-3.5 ${syncingGithub ? 'animate-spin' : ''}`}
+                />
+                <span>{syncingGithub ? 'Syncing...' : 'Sync GitHub'}</span>
+              </button>
             </div>
           </div>
 
           {loadingPortfolio ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {[0, 1, 2, 3].map((idx) => (
+              {[0, 1, 2].map((idx) => (
                 <div
                   key={idx}
-                  className="aspect-[4/3] rounded-2xl bg-[#0c0e15] border border-white/10 p-6 flex flex-col justify-end"
+                  className={`${
+                    idx === 0 ? 'md:col-span-2 aspect-[16/9]' : 'aspect-[4/3]'
+                  } rounded-2xl bg-[#0c0e15] border border-white/10 p-6 flex flex-col justify-end`}
                 >
                   <div className="h-4 w-32 bg-white/10 rounded mb-3" />
                   <div className="h-6 w-56 bg-white/10 rounded" />
@@ -538,7 +591,7 @@ export default function App() {
               <p className="text-sm text-rose-200 mb-4">{portfolioError}</p>
               <button
                 type="button"
-                onClick={loadPortfolio}
+                onClick={() => loadPortfolio(false)}
                 className="px-4 py-2 rounded-lg bg-white text-[#050507] text-xs font-semibold"
               >
                 Retry Loading Works
@@ -701,9 +754,11 @@ export default function App() {
               ))}
             </div>
           </div>
+
+          <ArchitectureSmartArt />
         </section>
 
-        {/* === HIRE & DIRECT SETTLEMENT SECTION === */}
+        {/* === HIRE & COLLABORATION SECTION === */}
         <section
           id="hire"
           ref={(el) => {
@@ -712,80 +767,60 @@ export default function App() {
           className="py-16 scroll-mt-24 border-t border-white/10"
         >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            {/* Left Column: CTA + Payment Channels + Status Lookup */}
+            {/* Left Column: Personal Focus + Visual Social Channels + Status Lookup */}
             <div className="lg:col-span-6 space-y-6">
               <div className="rounded-2xl bg-[#0a0c12]/92 border border-white/12 p-7 sm:p-9">
                 <p className="text-xs font-medium text-[var(--accent)] mb-2">
-                  Available for Commission
+                  Work With Codah Abiude
                 </p>
                 <h2 className="font-display text-3xl sm:text-4xl font-bold text-white leading-tight mb-4">
                   Let&apos;s Build Something Impressive.
                 </h2>
                 <p className="text-sm sm:text-base text-slate-300 leading-relaxed mb-8">
-                  Whether you need a complete full-stack web platform or a bespoke Three.js
-                  3D product showcase, I deliver resilient, production-ready work on
-                  schedule.
+                  Whether you are launching a full-stack web platform, a peer-to-peer
+                  mobile experience, or a Three.js interactive showcase, I collaborate
+                  closely from first whiteboard sketch to production release.
                 </p>
 
                 <h3 className="font-display text-sm font-semibold text-white mb-4">
-                  Direct Payment Channels
+                  Connect Directly
                 </h3>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {/* Crypto Payment */}
-                  <div className="rounded-xl bg-[#06080d] border border-white/12 p-5 text-center">
-                    <CryptoQrCode address={CRYPTO_ADDRESS} />
-                    <h4 className="font-display text-sm font-bold text-white mt-4 mb-1">
-                      USDT / ETH
-                    </h4>
-                    <p className="font-mono text-[11px] text-slate-300 break-all bg-white/5 rounded-md p-2 mb-3">
-                      {CRYPTO_ADDRESS}
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        handleCopy('crypto', CRYPTO_ADDRESS, 'USDT/ETH wallet address')
-                      }
-                      className="inline-flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded-lg border border-white/15 text-xs font-semibold text-white hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+                  {SOCIAL_CHANNELS.map(({ name, handle, href, Logo, external }) => (
+                    <a
+                      key={name}
+                      href={href}
+                      target={external ? '_blank' : undefined}
+                      rel={external ? 'noreferrer' : undefined}
+                      className={`group rounded-xl bg-[#06080d] border border-white/12 p-3.5 flex items-center gap-3.5 hover:border-[var(--accent)] transition-colors ${
+                        name === 'Email' ? 'sm:col-span-2' : ''
+                      }`}
                     >
-                      {copiedKey === 'crypto' ? (
-                        <Check className="w-3.5 h-3.5 text-[var(--accent)]" />
-                      ) : (
-                        <Copy className="w-3.5 h-3.5" />
-                      )}
-                      <span>{copiedKey === 'crypto' ? 'Copied' : 'Copy Address'}</span>
-                    </button>
-                  </div>
+                      <span className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[var(--accent)] group-hover:bg-[var(--accent)] group-hover:text-[#050507] transition-colors shrink-0">
+                        <Logo className="w-5 h-5" />
+                      </span>
+                      <span className="min-w-0">
+                        <span className="block font-display text-sm font-bold text-white group-hover:text-[var(--accent)] transition-colors">
+                          {name}
+                        </span>
+                        <span className="block font-mono text-xs text-slate-400 truncate">
+                          {handle}
+                        </span>
+                      </span>
+                    </a>
+                  ))}
+                </div>
 
-                  {/* M-Pesa Payment */}
-                  <div className="rounded-xl bg-[#06080d] border border-white/12 p-5 text-center flex flex-col justify-between">
-                    <div>
-                      <p className="text-xs text-slate-400 mb-2">Mobile Money</p>
-                      <h4 className="font-display text-base font-bold text-white mb-3">
-                        M-Pesa Direct
-                      </h4>
-                      <p className="font-mono text-2xl font-medium text-[var(--accent)] tracking-wide mb-1">
-                        {MPESA_NUMBER}
-                      </p>
-                      <p className="font-mono text-xs text-slate-400 mb-4">
-                        Paybill: {MPESA_PAYBILL}
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        handleCopy('mpesa', MPESA_NUMBER.replace(/\s+/g, ''), 'M-Pesa number')
-                      }
-                      className="inline-flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded-lg border border-white/15 text-xs font-semibold text-white hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
-                    >
-                      {copiedKey === 'mpesa' ? (
-                        <Check className="w-3.5 h-3.5 text-[var(--accent)]" />
-                      ) : (
-                        <Copy className="w-3.5 h-3.5" />
-                      )}
-                      <span>{copiedKey === 'mpesa' ? 'Copied' : 'Copy Number'}</span>
-                    </button>
-                  </div>
+                <div className="rounded-xl bg-[#06080d] border border-white/12 p-4">
+                  <p className="font-mono text-xs text-[var(--accent)] mb-1">
+                    Clarity-First Engineering
+                  </p>
+                  <p className="text-sm text-slate-300">
+                    Before writing code, I map out user flows, API contracts, and
+                    component architecture in plain language so every milestone stays
+                    transparent.
+                  </p>
                 </div>
               </div>
 
@@ -899,14 +934,14 @@ export default function App() {
 
                   <label className="block">
                     <span className="block text-xs font-medium text-slate-300 mb-1.5">
-                      Estimated Budget
+                      Target Timeline
                     </span>
                     <select
-                      value={budget}
-                      onChange={(e) => setBudget(e.target.value)}
+                      value={timeline}
+                      onChange={(e) => setTimeline(e.target.value)}
                       className="w-full rounded-lg bg-[#05060a] border border-white/15 px-4 py-3 text-sm text-white focus:outline-none focus:border-[var(--accent)]"
                     >
-                      {BUDGET_OPTIONS.map((opt) => (
+                      {TIMELINE_OPTIONS.map((opt) => (
                         <option key={opt} value={opt}>
                           {opt}
                         </option>
@@ -971,51 +1006,23 @@ export default function App() {
             <span>&copy; 2026 Codah Abiude · Built in Kenya</span>
           </div>
 
-          <div className="flex items-center gap-6">
-            <a
-              href="https://github.com"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="GitHub"
-              className="inline-flex items-center gap-1.5 hover:text-[var(--accent)] transition-colors"
-            >
-              <Github className="w-4 h-4" />
-              <span>GitHub</span>
-            </a>
-            <a
-              href="https://x.com"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="X"
-              className="inline-flex items-center gap-1.5 hover:text-[var(--accent)] transition-colors"
-            >
-              <Twitter className="w-4 h-4" />
-              <span>X</span>
-            </a>
-            <a
-              href="https://instagram.com"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="Instagram"
-              className="inline-flex items-center gap-1.5 hover:text-[var(--accent)] transition-colors"
-            >
-              <Instagram className="w-4 h-4" />
-              <span>Instagram</span>
-            </a>
-            <a
-              href="mailto:lusobioabiude@gmail.com"
-              aria-label="Email Codah Abiude"
-              className="inline-flex items-center gap-1.5 hover:text-[var(--accent)] transition-colors"
-            >
-              <Mail className="w-4 h-4" />
-              <span>Email</span>
-            </a>
+          <div className="flex flex-wrap items-center justify-center gap-6">
+            {SOCIAL_CHANNELS.map(({ name, href, Logo, external }) => (
+              <a
+                key={name}
+                href={name === 'GitHub' ? githubProfile : href}
+                target={external ? '_blank' : undefined}
+                rel={external ? 'noreferrer' : undefined}
+                aria-label={name}
+                className="inline-flex items-center gap-2 hover:text-[var(--accent)] transition-colors"
+              >
+                <Logo className="w-4 h-4" />
+                <span>{name}</span>
+              </a>
+            ))}
           </div>
         </footer>
       </main>
-
-      {/* Bottom 3D Scene Control Dock */}
-      <ControlDock controls={sceneControls} onChange={setSceneControls} />
 
       {/* Project Case Study Modal */}
       <ProjectModal

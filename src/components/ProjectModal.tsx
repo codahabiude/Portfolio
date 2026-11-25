@@ -1,4 +1,4 @@
-import { ArrowUpRight, Heart, X } from 'lucide-react';
+import { ArrowUpRight, GitFork, Github, Heart, Star, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import type { PortfolioProject } from '../types/portfolio.ts';
 
@@ -71,7 +71,7 @@ export function ProjectModal({
               </span>
             </div>
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0c0e14] via-black/30 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0c0e14] via-black/35 to-transparent" />
           <button
             type="button"
             onClick={onClose}
@@ -85,9 +85,9 @@ export function ProjectModal({
             <div className="flex flex-wrap items-center gap-2 text-xs text-slate-300 mb-2">
               <span>{project.category}</span>
               <span aria-hidden="true">·</span>
-              <span>{project.client}</span>
+              <span className="font-mono">{project.primaryLanguage}</span>
               <span aria-hidden="true">·</span>
-              <span className="font-mono">{project.year}</span>
+              <span>{project.client}</span>
             </div>
             <h2 id="project-modal-title" className="font-display text-2xl sm:text-3xl font-bold text-white">
               {project.title}
@@ -98,7 +98,18 @@ export function ProjectModal({
 
         <div className="p-6 sm:p-8 space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-4 pb-5 border-b border-white/10">
-            <p className="font-mono text-xs text-slate-300">{project.metrics}</p>
+            <div className="flex flex-wrap items-center gap-4 font-mono text-xs text-slate-300">
+              <span>{project.metrics}</span>
+              <span className="inline-flex items-center gap-1 text-slate-400">
+                <Star className="w-3.5 h-3.5" />
+                {project.stars}
+              </span>
+              <span className="inline-flex items-center gap-1 text-slate-400">
+                <GitFork className="w-3.5 h-3.5" />
+                {project.forks}
+              </span>
+            </div>
+
             <button
               type="button"
               onClick={handleAppreciate}
@@ -149,16 +160,27 @@ export function ProjectModal({
 
           <div className="pt-4 border-t border-white/10 flex flex-wrap items-center justify-between gap-4">
             <span className="font-mono text-xs text-slate-400">
-              {project.views.toLocaleString()} project views recorded
+              {project.views.toLocaleString()} views · github.com/codahabiude/{project.repoName}
             </span>
-            <button
-              type="button"
-              onClick={() => onStartSimilar(project)}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--accent)] text-[#050507] text-xs font-semibold hover:brightness-110 transition-all whitespace-nowrap shrink-0"
-            >
-              <span>Request Similar Build</span>
-              <ArrowUpRight className="w-4 h-4" />
-            </button>
+            <div className="flex flex-wrap items-center gap-3">
+              <a
+                href={project.repoUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-white/20 text-xs font-semibold text-white hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors whitespace-nowrap shrink-0"
+              >
+                <Github className="w-4 h-4" />
+                <span>View Source Repo</span>
+              </a>
+              <button
+                type="button"
+                onClick={() => onStartSimilar(project)}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--accent)] text-[#050507] text-xs font-semibold hover:brightness-110 transition-all whitespace-nowrap shrink-0"
+              >
+                <span>Request Similar Build</span>
+                <ArrowUpRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </div>
       </div>

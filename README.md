@@ -7,16 +7,16 @@ A high-efficiency, full-stack 3D portfolio web application built for **Codah Abi
 - **Real-Time 3D Gyroscopic Core & Spatial Grid (`Three.js` / `WebGL 2`)**
   - Procedural 8-part 3D centerpiece (`THREE.Group`) with `RoomEnvironment` PMREM studio reflections, anodized metallic/carbon material contrast, instanced orbital beacon nodes (`InstancedMesh`), and a procedural spatial grid floor.
   - Hardware-adaptive software WebGL guard (`isSoftwareGl`) with `afterDraw` GPU fence pacing and zero per-frame garbage collection allocations.
-  - Collapsible bottom-center **3D Scene Control Dock** (`H` shortcut) for adjusting core explosion (`0–100%`), orbit speed (`Paused` / `Orbit` / `Hyper`), lighting spectrum (`Auto` / `Emerald` / `Cobalt`), and wireframe lattice mode.
+  - Automatic section-reactive camera choreography, pointer parallax, and dynamic lighting spectrum transitions.
 - **Full-Stack Express + Vite Backend (`server.ts`)**
   - `GET /api/portfolio`: Serves portfolio projects, services, and capability metrics from persistent server storage (`data/portfolio-store.json`).
   - `POST /api/projects/:id/view` & `POST /api/projects/:id/appreciate`: Persists real project view and appreciation counts atomically.
   - `POST /api/inquiries`: Validates, rate-limits, and stores client project requests, issuing a unique tracking reference ID (`REQ-2026-XXXXXX`).
   - `GET /api/inquiries/status/:refId`: Verifies inquiry receipt status without exposing sensitive submitter details.
-- **Selected Works & Interactive Case Studies**
-  - Filterable bento showcase featuring **Neon Architects**, **Void Data**, **Three.js Experiments**, and **Edge Commerce Core** with 3D pointer-tilt cards and case study modal inspection.
-- **Direct Settlement Channels**
-  - Built-in USDT/ETH wallet address with local procedural SVG QR graphic and one-click copy, plus M-Pesa / Mobile Money details with clipboard toast feedback.
+- **Selected Works & Live GitHub Sync (`github.com/codahabiude`)**
+  - Filterable showcase powered directly by Codah Abiude's public GitHub repositories (**Nakoyonjo Admin System**, **LanVox**, and **3D Web Portfolio**), synchronized via `GET /api/portfolio?sync=1` with 3D pointer-tilt cards, source links, and interactive case study modal inspection.
+- **Personal Collaboration, Smart-Art Workflow & Visual Brand Logos**
+  - Interactive 4-stage Smart-Art architectural workflow diagram (`ArchitectureSmartArt.tsx`), vector technology stack marks, direct social/contact logos (GitHub, LinkedIn, Instagram, Facebook, `codahabiude@gmail.com`), and inquiry reference ID tracking.
 
 ## Tech Stack
 
@@ -37,11 +37,11 @@ A high-efficiency, full-stack 3D portfolio web application built for **Codah Abi
 │   ├── assets/images/                 # Generated showcase artwork
 │   └── components/
 │       ├── ThreePortfolioScene.tsx    # Hardware-adaptive Three.js 3D viewport
-│       ├── ControlDock.tsx            # Collapsible bottom-center 3D control dock
+│       ├── ArchitectureSmartArt.tsx   # Interactive 4-stage Smart-Art schematic & stack logos
+│       ├── BrandMarks.tsx             # Vector brand & technology stack logos
 │       ├── Navbar.tsx                 # 3-zone top bar & mobile drawer
 │       ├── ProjectCard.tsx            # 3D-tilt showcase card
-│       ├── ProjectModal.tsx           # Interactive case study modal
-│       └── CryptoQrCode.tsx           # Zero-dependency SVG QR matrix
+│       └── ProjectModal.tsx           # Interactive case study modal
 └── data/                              # Auto-created JSON persistence store
 ```
 

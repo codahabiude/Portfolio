@@ -20,13 +20,15 @@ const DATA_DIR = path.resolve(__dirname, 'data');
 const STORE_PATH = path.resolve(DATA_DIR, 'portfolio-store.json');
 const PORT = Number(process.env.PORT) || 3000;
 const IS_PROD = process.env.NODE_ENV === 'production';
+const GITHUB_USER = 'codahabiude';
+const GITHUB_PROFILE_URL = `https://github.com/${GITHUB_USER}`;
 
 interface StoredInquiry {
   referenceId: string;
   name: string;
   email: string;
   service: string;
-  budget: string;
+  timeline: string;
   details: string;
   status: 'Received' | 'Under Review' | 'Scheduled';
   submittedAt: string;
@@ -38,95 +40,102 @@ interface PortfolioStore {
   inquiries: StoredInquiry[];
 }
 
+interface GitHubRepoApiItem {
+  name: string;
+  html_url: string;
+  description: string | null;
+  language: string | null;
+  stargazers_count: number;
+  forks_count: number;
+  updated_at: string;
+  fork: boolean;
+}
+
 const INITIAL_PROJECTS: PortfolioProject[] = [
   {
-    id: 'neon-architects',
-    title: 'Neon Architects',
-    subtitle: 'Interactive 3D Architectural Pavilion',
-    category: '3D Web',
+    id: 'nakoyonjo-admin-system',
+    repoName: 'Nakoyonjo-Admin-System',
+    repoUrl: 'https://github.com/codahabiude/Nakoyonjo-Admin-System',
+    title: 'Nakoyonjo Admin System',
+    subtitle: 'School Administration & Academic Operations Platform',
+    category: 'Full-Stack',
+    primaryLanguage: 'TypeScript',
     year: '2026',
-    client: 'East Africa Spatial Studio',
-    imageUrl: '/src/assets/images/project_neon_architects_1795527589172.jpg',
+    client: 'Nakoyonjo DEB Primary School · Bungoma, Kenya',
+    imageUrl: '/src/assets/images/project_nakoyonjo_admin_1795608271960.jpg',
     summary:
-      'A real-time WebGL architectural walkthrough allowing prospective buyers and architects to inspect structural concrete massing, linear lighting schematics, and time-of-day solar angles directly in the browser.',
+      'A comprehensive school management system engineered for Nakoyonjo DEB Primary School. Supports role-based portals for Admins, Class Teachers, Subject Teachers, and Parents—handling student enrollment, exams and marks entry, class rankings, daily attendance registers, bulk PDF/Excel report cards, and SMS parent alerts via Africa’s Talking.',
     architecture:
-      'Built on a modular Three.js PBR pipeline with RoomEnvironment IBL reflections, custom GLSL perimeter lighting, instanced structural louvers, and zero-GC camera damping.',
-    stack: ['Three.js', 'TypeScript', 'GLSL', 'React 19', 'Tailwind CSS'],
-    metrics: '60 FPS steady on desktop · 1.2s initial scene interactive',
+      'Built on Next.js, TypeScript, Prisma ORM, and Tailwind CSS with PDFKit & ExcelJS document pipelines, PWA installability, Capacitor Android packaging, and Docker + Caddy deployment.',
+    stack: ['TypeScript', 'Next.js', 'Prisma', 'Tailwind CSS', 'Capacitor', 'Docker'],
+    metrics: '4 Role Portals · Bulk PDF & Excel Reports · PWA + Android APK',
     deliverables: [
-      'Procedural PBR Pavilion Geometry',
-      'Camera Preset Choreography',
-      'Solar & Material Finish Configurator',
+      'Multi-Role RBAC (Admin, Teachers, Parent Portal)',
+      'Exams, Grading Rules & Bulk Report Card Export',
+      'Africa’s Talking SMS Delivery & Attendance Logs',
     ],
-    appreciations: 48,
-    views: 612,
+    stars: 0,
+    forks: 0,
+    updatedAt: '2026-11-23T11:25:46Z',
+    appreciations: 14,
+    views: 128,
     featured: true,
   },
   {
-    id: 'void-data',
-    title: 'Void Data',
-    subtitle: 'Topographic Telemetry & Spatial Analytics',
-    category: 'Systems UI',
+    id: 'lanvox',
+    repoName: 'LanVox',
+    repoUrl: 'https://github.com/codahabiude/LanVox',
+    title: 'LanVox',
+    subtitle: 'Offline Wi-Fi Direct & mDNS Mesh Communication App',
+    category: 'Mobile & P2P',
+    primaryLanguage: 'Kotlin',
     year: '2026',
-    client: 'Nairobi Mobility Lab',
-    imageUrl: '/src/assets/images/project_void_data_1795527589936.jpg',
+    client: 'Android P2P Open Release',
+    imageUrl: '/src/assets/images/project_lanvox_mesh_1795608272028.jpg',
     summary:
-      'A high-contrast spatial telemetry dashboard rendering live elevation, density, and route-load terrain meshes with synchronized tabular metrics and sub-50ms stream updates.',
+      'A peer-to-peer Android communication platform connecting multiple phones directly over Wi-Fi Direct (P2P) and local Wi-Fi / Mobile Hotspot mDNS mesh (NSD) without internet, router accounts, or a central server. Delivers 1:1 and multi-phone group messaging, read receipts, file sharing, WebRTC audio calling, and Camera2 video calling.',
     architecture:
-      'Combines a WebGL displaced heightfield mesh via onBeforeCompile with a Node.js streaming aggregation API and strict tabular-numeral readout architecture.',
-    stack: ['React', 'Three.js Shaders', 'Express', 'WebSockets', 'TypeScript'],
-    metrics: '18,400 live vertices · 38ms API round-trip latency',
+      'Symmetric ChatServerService (port 8988) running on every handset with direct peer links, group broadcast routing, MID packet deduplication, and LocalMeshDiscovery (_lanvox._tcp.).',
+    stack: ['Kotlin', 'Android SDK', 'Wi-Fi Direct', 'mDNS / NSD', 'WebRTC', 'Camera2'],
+    metrics: 'Zero Central Server · Multi-Peer Mesh · Audio & Video Calls',
     deliverables: [
-      'Custom Terrain Displacement Shader',
-      'Streaming Telemetry Backend',
-      'Operator Control Dock UI',
+      'Hostless Wi-Fi Direct & Hotspot NSD Discovery',
+      'Symmetric Group Mesh & File Transfer Engine',
+      'WebRTC Voice & Camera2 Peer Video Calling',
     ],
-    appreciations: 39,
-    views: 495,
+    stars: 0,
+    forks: 0,
+    updatedAt: '2026-11-21T10:16:41Z',
+    appreciations: 19,
+    views: 164,
   },
   {
-    id: 'threejs-experiments',
-    title: 'Three.js Experiments',
-    subtitle: 'Kinetic Optics & Procedural Art Lab',
+    id: 'portfolio',
+    repoName: 'Portfolio',
+    repoUrl: 'https://github.com/codahabiude/Portfolio',
+    title: '3D Web Portfolio',
+    subtitle: 'Futuristic Three.js & Full-Stack Showcase',
     category: '3D Web',
-    year: '2025',
-    client: 'Independent Research',
+    primaryLanguage: 'TypeScript',
+    year: '2026',
+    client: 'codahabiude/Portfolio',
     imageUrl: '/src/assets/images/project_threejs_lab_1795527589083.jpg',
     summary:
-      'An ongoing series of mathematical WebGL studies exploring gyroscopic ring kinematics, physical anisotropy on brushed titanium, and optical glass dispersion.',
+      'An interactive 3D WebGL and full-stack engineering portfolio featuring a procedural 8-part gyroscopic core, section-reactive camera choreography, collapsible 3D scene controls, live GitHub repository sync, and server-validated inquiry tracking.',
     architecture:
-      'Hardware-adaptive rendering engine with automatic software-WebGL pacing, pre-allocated vector math pools, and procedural CanvasTexture normal maps.',
-    stack: ['WebGL 2', 'Three.js', 'PMREM Lighting', 'Procedural Math'],
-    metrics: '100% procedural geometry · Zero external asset dependencies',
+      'Hardware-adaptive Three.js WebGL 2 renderer with RoomEnvironment PBR reflections, zero-GC render loop, and an Express + Vite TypeScript backend with atomic JSON persistence.',
+    stack: ['TypeScript', 'React 19', 'Three.js', 'Tailwind CSS', 'Express', 'Vite'],
+    metrics: 'Adaptive WebGL 2 · Live GitHub Sync · <50ms API Target',
     deliverables: [
-      'Kinetic Gimbal Physics Solver',
-      'Adaptive Software-GL Guard',
-      'Interactive Shader Playground',
+      'Procedural 3D Gyroscopic Core & Spatial Grid',
+      'Live GitHub Repo Metadata Synchronization',
+      'Rate-Limited Inquiry & Status Tracking API',
     ],
-    appreciations: 64,
-    views: 830,
-  },
-  {
-    id: 'edge-commerce-core',
-    title: 'Edge Commerce Core',
-    subtitle: 'Full-Stack Order & M-Pesa Settlement Engine',
-    category: 'Full-Stack',
-    year: '2026',
-    client: 'FinTech & Retail Infrastructure',
-    imageUrl: '/src/assets/images/project_edge_commerce_1795527591292.jpg',
-    summary:
-      'A resilient full-stack API platform uniting real-time inventory synchronization, M-Pesa STK push webhook verification, and an ultra-clean operations console.',
-    architecture:
-      'TypeScript Express backend with idempotent transaction ledgers, strict payload schema validation, and optimistic React client state.',
-    stack: ['Node.js', 'Express', 'TypeScript', 'React', 'REST APIs'],
-    metrics: '99.98% settlement reliability · 42ms p95 API latency',
-    deliverables: [
-      'Idempotent Payment API',
-      'Webhook Signature Verifier',
-      'Real-Time Operations Console',
-    ],
-    appreciations: 52,
-    views: 574,
+    stars: 0,
+    forks: 0,
+    updatedAt: '2026-11-25T12:02:11Z',
+    appreciations: 22,
+    views: 210,
   },
 ];
 
@@ -134,13 +143,13 @@ const SERVICES: ServiceItem[] = [
   {
     index: '01',
     title: 'Full-Stack Web Engineering',
-    discipline: 'React · TypeScript · Node.js',
+    discipline: 'TypeScript · React · Next.js · Node.js',
     description:
-      'End-to-end web applications engineered for speed, clarity, and maintainability. Clean REST APIs, typed data contracts, and pixel-accurate responsive interfaces.',
+      'End-to-end web applications engineered for speed, clarity, and maintainability—from multi-role management systems and Prisma databases to typed REST APIs.',
     deliverables: [
-      'Production React & TypeScript SPA architecture',
-      'Express / Node.js APIs with strict validation',
-      'Sub-second core web vitals optimization',
+      'Production React, Next.js & TypeScript architecture',
+      'Express / Node.js APIs with strict input validation',
+      'PDF/Excel reporting & automated SMS notifications',
     ],
     typicalTimeline: '2–5 Weeks',
   },
@@ -159,29 +168,29 @@ const SERVICES: ServiceItem[] = [
   },
   {
     index: '03',
-    title: 'Design Systems & UI/UX',
-    discipline: 'Architecture · Prototyping · Accessibility',
+    title: 'Mobile & P2P Systems',
+    discipline: 'Kotlin · Capacitor · WebRTC · UI/UX',
     description:
-      'User-centric design systems bridging visual craft with engineering rigor. Clear typographic hierarchy, accessible contrast, and zero interface clutter.',
+      'Offline-first Android apps, Capacitor hybrid builds, and clean user-centric interfaces bridging visual craft with resilient local networking.',
     deliverables: [
-      'Tokenized color, spacing & type scales',
-      'Interactive component libraries & state flows',
-      'WCAG AA contrast & keyboard navigation audits',
+      'Native Kotlin Android & Capacitor mobile apps',
+      'Peer-to-peer Wi-Fi Direct / WebRTC architecture',
+      'WCAG AA accessible design systems',
     ],
-    typicalTimeline: '1–3 Weeks',
+    typicalTimeline: '2–4 Weeks',
   },
 ];
 
 const CAPABILITIES: CapabilityMetric[] = [
   {
-    label: 'HTML / CSS & Design Systems',
+    label: 'TypeScript, React & Next.js',
     proficiency: 90,
-    detail: 'Semantic layout architecture, Tailwind CSS, responsive grids',
+    detail: 'Full-stack web apps, Prisma ORM, Express APIs, Tailwind CSS',
   },
   {
-    label: 'UI / UX Engineering',
+    label: 'UI / UX & Design Systems',
     proficiency: 88,
-    detail: 'Accessible interaction flows, typographic precision, zero-clutter HUDs',
+    detail: 'Role-based portals, accessible flows, zero-clutter interfaces',
   },
   {
     label: 'Three.js / WebGL & Shaders',
@@ -189,9 +198,9 @@ const CAPABILITIES: CapabilityMetric[] = [
     detail: 'PBR materials, procedural geometry, GLSL, hardware-adaptive loops',
   },
   {
-    label: 'TypeScript & Full-Stack APIs',
+    label: 'Kotlin Android & P2P Networking',
     proficiency: 84,
-    detail: 'React 19, Express, REST architecture, input validation & persistence',
+    detail: 'Wi-Fi Direct, mDNS NSD discovery, WebRTC voice & Camera2 video',
   },
 ];
 
@@ -202,19 +211,127 @@ const ALLOWED_SERVICES = new Set([
   'Technical Consultation',
 ]);
 
-const ALLOWED_BUDGETS = new Set([
-  '$500 – $1,500',
-  '$1,500 – $4,000',
-  '$4,000 – $10,000',
-  '$10,000+',
+const ALLOWED_TIMELINES = new Set([
+  '2–4 Weeks',
+  '1–2 Months',
+  'Ongoing Collaboration',
+  'Flexible',
 ]);
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const REF_ID_REGEX = /^REQ-2026-[A-F0-9]{6}$/;
 
-// In-memory store mutex & rate limiter
 let storeWriteQueue: Promise<void> = Promise.resolve();
 const inquiryRateMap = new Map<string, number[]>();
+
+// Cached live GitHub metadata (10 minute TTL)
+let cachedGithubRepos: GitHubRepoApiItem[] | null = null;
+let cachedGithubAt = 0;
+let lastSyncIso: string | null = null;
+const GITHUB_CACHE_TTL_MS = 10 * 60 * 1000;
+
+async function fetchLiveGithubRepos(force = false): Promise<GitHubRepoApiItem[] | null> {
+  const now = Date.now();
+  if (!force && cachedGithubRepos && now - cachedGithubAt < GITHUB_CACHE_TTL_MS) {
+    return cachedGithubRepos;
+  }
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 3500);
+  try {
+    const res = await fetch(
+      `https://api.github.com/users/${GITHUB_USER}/repos?sort=updated&per_page=20`,
+      {
+        headers: {
+          'User-Agent': 'codahabiude-portfolio-server',
+          Accept: 'application/vnd.github+json',
+        },
+        signal: controller.signal,
+      }
+    );
+    if (!res.ok) return cachedGithubRepos;
+    const data = (await res.json()) as unknown;
+    if (!Array.isArray(data)) return cachedGithubRepos;
+    cachedGithubRepos = data.filter(
+      (item): item is GitHubRepoApiItem =>
+        Boolean(item && typeof item.name === 'string' && typeof item.html_url === 'string')
+    );
+    cachedGithubAt = now;
+    lastSyncIso = new Date().toISOString();
+    return cachedGithubRepos;
+  } catch {
+    return cachedGithubRepos;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+function inferCategory(repo: GitHubRepoApiItem): PortfolioProject['category'] {
+  const lang = (repo.language || '').toLowerCase();
+  const text = `${repo.name} ${repo.description || ''}`.toLowerCase();
+  if (text.includes('3d') || text.includes('three') || text.includes('portfolio')) {
+    return '3D Web';
+  }
+  if (lang === 'kotlin' || lang === 'swift' || text.includes('android') || text.includes('p2p')) {
+    return 'Mobile & P2P';
+  }
+  return 'Full-Stack';
+}
+
+function mergeGithubIntoProjects(
+  storedProjects: PortfolioProject[],
+  ghRepos: GitHubRepoApiItem[] | null
+): PortfolioProject[] {
+  if (!ghRepos || ghRepos.length === 0) return storedProjects;
+  const ghByName = new Map(ghRepos.map((r) => [r.name.toLowerCase(), r]));
+
+  const updated = storedProjects.map((proj) => {
+    const match = ghByName.get(proj.repoName.toLowerCase());
+    if (!match) return proj;
+    return {
+      ...proj,
+      repoUrl: match.html_url,
+      primaryLanguage: match.language || proj.primaryLanguage,
+      stars: match.stargazers_count,
+      forks: match.forks_count,
+      updatedAt: match.updated_at,
+      year: match.updated_at ? match.updated_at.slice(0, 4) : proj.year,
+    };
+  });
+
+  // Automatically surface any newly pushed non-fork public GitHub repos
+  const knownNames = new Set(updated.map((p) => p.repoName.toLowerCase()));
+  for (const repo of ghRepos) {
+    if (repo.fork || knownNames.has(repo.name.toLowerCase())) continue;
+    const slug = repo.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    if (!slug) continue;
+    updated.push({
+      id: slug,
+      repoName: repo.name,
+      repoUrl: repo.html_url,
+      title: repo.name.replace(/[-_]+/g, ' '),
+      subtitle: repo.description || `Open-source ${repo.language || 'software'} repository`,
+      category: inferCategory(repo),
+      primaryLanguage: repo.language || 'TypeScript',
+      year: repo.updated_at ? repo.updated_at.slice(0, 4) : '2026',
+      client: `github.com/${GITHUB_USER}`,
+      imageUrl: '/src/assets/images/project_edge_commerce_1795527591292.jpg',
+      summary:
+        repo.description ||
+        `Public repository ${repo.name} authored by Codah Abiude on GitHub.`,
+      architecture: `Primary implementation in ${repo.language || 'modern web tooling'}, synchronized directly from github.com/${GITHUB_USER}/${repo.name}.`,
+      stack: repo.language ? [repo.language, 'GitHub'] : ['GitHub'],
+      metrics: `${repo.stargazers_count} stars · ${repo.forks_count} forks`,
+      deliverables: ['Source Repository on GitHub', 'Documentation & Build Configuration'],
+      stars: repo.stargazers_count,
+      forks: repo.forks_count,
+      updatedAt: repo.updated_at,
+      appreciations: 1,
+      views: 1,
+    });
+  }
+
+  return updated;
+}
 
 async function ensureStore(): Promise<PortfolioStore> {
   await fs.mkdir(DATA_DIR, { recursive: true });
@@ -300,7 +417,6 @@ async function startServer(): Promise<void> {
   app.set('trust proxy', true);
   app.use(express.json({ limit: '32kb' }));
 
-  // Security headers compatible with iframe preview
   app.use((_req, res, next) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
@@ -311,11 +427,18 @@ async function startServer(): Promise<void> {
     res.json({ ok: true, timestamp: new Date().toISOString() });
   });
 
-  app.get('/api/portfolio', async (_req, res) => {
+  app.get('/api/portfolio', async (req, res) => {
+    const forceSync = req.query.sync === '1';
     try {
-      const store = await ensureStore();
+      const [store, ghRepos] = await Promise.all([
+        ensureStore(),
+        fetchLiveGithubRepos(forceSync),
+      ]);
+      const projects = mergeGithubIntoProjects(store.projects, ghRepos);
       res.json({
-        projects: store.projects,
+        githubProfile: GITHUB_PROFILE_URL,
+        syncedAt: lastSyncIso,
+        projects,
         services: SERVICES,
         capabilities: CAPABILITIES,
       });
@@ -374,7 +497,7 @@ async function startServer(): Promise<void> {
     const name = cleanText(req.body?.name, 80);
     const email = cleanText(req.body?.email, 120).toLowerCase();
     const service = cleanText(req.body?.service, 60);
-    const budget = cleanText(req.body?.budget, 40);
+    const timeline = cleanText(req.body?.timeline, 40);
     const details = cleanText(req.body?.details, 2000);
 
     if (name.length < 2) {
@@ -389,8 +512,8 @@ async function startServer(): Promise<void> {
       res.status(400).json({ error: 'Please select a valid engagement scope.' });
       return;
     }
-    if (!ALLOWED_BUDGETS.has(budget)) {
-      res.status(400).json({ error: 'Please select a valid budget range.' });
+    if (!ALLOWED_TIMELINES.has(timeline)) {
+      res.status(400).json({ error: 'Please select a valid target timeline.' });
       return;
     }
     if (details.length < 10) {
@@ -410,7 +533,7 @@ async function startServer(): Promise<void> {
         name,
         email,
         service,
-        budget,
+        timeline,
         details,
         status: 'Received',
         submittedAt,
@@ -448,7 +571,6 @@ async function startServer(): Promise<void> {
         res.status(404).json({ error: 'No inquiry found for that reference ID.' });
         return;
       }
-      // Return status metadata only (never expose email/message PII on public lookup)
       res.json({
         referenceId: found.referenceId,
         status: found.status,

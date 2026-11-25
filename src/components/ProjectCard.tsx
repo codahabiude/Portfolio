@@ -67,7 +67,7 @@ export function ProjectCard({ project, featured = false, onSelect }: ProjectCard
       )}
 
       {/* Measured contrast scrim */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[#050507] via-[#050507]/55 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#050507] via-[#050507]/60 to-transparent" />
 
       {/* Dynamic pointer glare */}
       <div
@@ -81,14 +81,18 @@ export function ProjectCard({ project, featured = false, onSelect }: ProjectCard
 
       <div className="relative z-10 h-full p-6 flex flex-col justify-end">
         <div className="flex items-center justify-between gap-4 mb-2">
-          <p className="text-xs text-slate-300 font-medium">
+          <p className="text-xs text-slate-300 font-medium truncate">
             <span>{project.category}</span>
             <span className="mx-2 text-slate-500" aria-hidden="true">
               ·
             </span>
-            <span className="font-mono">{project.year}</span>
+            <span className="font-mono">{project.primaryLanguage}</span>
+            <span className="mx-2 text-slate-500" aria-hidden="true">
+              ·
+            </span>
+            <span className="font-mono">{project.repoName}</span>
           </p>
-          <span className="inline-flex items-center gap-1.5 font-mono text-xs text-slate-300">
+          <span className="inline-flex items-center gap-1.5 font-mono text-xs text-slate-300 shrink-0">
             <Heart className="w-3.5 h-3.5 text-[var(--accent)]" />
             {project.appreciations}
           </span>

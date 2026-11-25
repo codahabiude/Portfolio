@@ -1,12 +1,15 @@
 export type SectionId = 'home' | 'work' | 'services' | 'about' | 'hire';
 
-export type ProjectCategory = 'All' | '3D Web' | 'Full-Stack' | 'Systems UI';
+export type ProjectCategory = 'All' | 'Full-Stack' | 'Mobile & P2P' | '3D Web';
 
 export interface PortfolioProject {
   id: string;
+  repoName: string;
+  repoUrl: string;
   title: string;
   subtitle: string;
   category: Exclude<ProjectCategory, 'All'>;
+  primaryLanguage: string;
   year: string;
   client: string;
   imageUrl: string;
@@ -15,6 +18,9 @@ export interface PortfolioProject {
   stack: string[];
   metrics: string;
   deliverables: string[];
+  stars: number;
+  forks: number;
+  updatedAt: string;
   appreciations: number;
   views: number;
   featured?: boolean;
@@ -36,6 +42,8 @@ export interface CapabilityMetric {
 }
 
 export interface PortfolioPayload {
+  githubProfile: string;
+  syncedAt: string | null;
   projects: PortfolioProject[];
   services: ServiceItem[];
   capabilities: CapabilityMetric[];
@@ -45,7 +53,7 @@ export interface InquiryPayload {
   name: string;
   email: string;
   service: string;
-  budget: string;
+  timeline: string;
   details: string;
 }
 
