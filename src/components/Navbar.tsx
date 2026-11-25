@@ -1,5 +1,5 @@
 import { Menu, X } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { SectionId } from '../types/portfolio.ts';
 import { CodahEmblemMark } from './BrandMarks.tsx';
 
@@ -18,6 +18,22 @@ const NAV_LINKS: { id: SectionId; label: string }[] = [
 export function Navbar({ activeSection, onNavigate }: NavbarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMobileOpen(false);
+    };
+    const onResize = () => {
+      if (window.innerWidth >= 768) setMobileOpen(false);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    window.addEventListener('resize', onResize);
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('resize', onResize);
+    };
+  }, [mobileOpen]);
+
   const handleSelect = (section: SectionId) => {
     setMobileOpen(false);
     onNavigate(section);
@@ -25,15 +41,15 @@ export function Navbar({ activeSection, onNavigate }: NavbarProps) {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40 h-[72px] bg-[#050507]/92 border-b border-white/10">
-      <div className="max-w-[1360px] mx-auto h-full px-4 sm:px-8 flex items-center justify-between gap-8">
+      <div className="max-w-[1360px] mx-auto h-full px-4 sm:px-8 flex items-center justify-between gap-4 sm:gap-8">
         {/* Zone 1: Brand wordmark + logo */}
         <button
           type="button"
           onClick={() => handleSelect('home')}
-          className="inline-flex items-center gap-3 text-left whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--accent)]"
+          className="inline-flex items-center gap-2.5 sm:gap-3 text-left whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--accent)]"
         >
-          <CodahEmblemMark className="w-11 h-11 shrink-0 drop-shadow-[0_0_12px_rgba(34,229,0,0.28)]" />
-          <span className="font-display text-lg font-bold tracking-tight text-white">
+          <CodahEmblemMark className="w-10 h-10 sm:w-11 sm:h-11 shrink-0 drop-shadow-[0_0_12px_rgba(34,229,0,0.28)]" />
+          <span className="font-display text-base sm:text-lg font-bold tracking-tight text-white">
             Codah Abiude
           </span>
         </button>

@@ -323,10 +323,10 @@ export default function App() {
       {/* Top Navigation */}
       <Navbar activeSection={activeSection} onNavigate={navigateTo} />
 
-      {/* Toast Notifications */}
+      {/* Toast Notifications (positioned above scroll-to-top button) */}
       <div
         aria-live="polite"
-        className="fixed bottom-6 right-4 sm:right-8 z-50 flex flex-col gap-2 pointer-events-none"
+        className="fixed bottom-20 right-4 sm:right-8 z-50 flex flex-col gap-2 max-w-[calc(100vw-2rem)] pointer-events-none"
       >
         {toasts.map((toast) => (
           <div
@@ -380,7 +380,7 @@ export default function App() {
               </p>
 
               <h1
-                className="font-display text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.02] mb-6"
+                className="font-display text-3xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight text-white leading-[1.04] mb-6"
                 style={{ textWrap: 'balance' }}
               >
                 Engineering Spatial Web &amp; Full-Stack Systems.
@@ -413,7 +413,7 @@ export default function App() {
 
             {/* Right Column: Codah Abiude Portrait */}
             <div className="lg:col-span-5 flex">
-              <div className="relative w-full min-h-[380px] lg:h-full rounded-2xl overflow-hidden bg-[#0c0e15] border border-white/15">
+              <div className="relative w-full aspect-square sm:aspect-[16/11] lg:aspect-auto min-h-[300px] lg:min-h-[380px] lg:h-full rounded-2xl overflow-hidden bg-[#0c0e15] border border-white/15">
                 {!portraitError ? (
                   <img
                     src="/assets/aistudio/codah-abiude-github_5146e819.jpg"
@@ -439,7 +439,7 @@ export default function App() {
                       Available for bespoke web &amp; 3D architecture
                     </p>
                   </div>
-                  <div className="w-15 h-15 rounded-full bg-[#050507]/85 border border-white/20 p-1 flex items-center justify-center shadow-[0_0_20px_rgba(0,255,136,0.28)] shrink-0">
+                  <div className="w-14 h-14 rounded-full bg-[#050507]/85 border border-white/20 p-1 flex items-center justify-center shadow-[0_0_20px_rgba(0,255,136,0.28)] shrink-0">
                     <CodahEmblemMark className="w-full h-full" />
                   </div>
                 </div>
@@ -668,10 +668,10 @@ export default function App() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
             <div className="lg:col-span-6 rounded-2xl bg-[#0a0c12]/92 border border-white/12 p-7 sm:p-10">
               <div className="flex flex-col sm:flex-row sm:items-center gap-6 mb-6">
-                <CodahFullLogo className="p-4 rounded-2xl border border-white/15 bg-[#050507] shadow-[0_0_24px_rgba(0,255,136,0.18)] shrink-0" />
-                <div>
+                <CodahFullLogo className="self-start sm:self-center p-4 rounded-2xl border border-white/15 bg-[#050507] shadow-[0_0_24px_rgba(0,255,136,0.18)] shrink-0" />
+                <div className="min-w-0">
                   <p className="text-xs font-medium text-[var(--accent)] mb-2">About Me</p>
-                  <h2 className="font-display text-3xl sm:text-4xl font-bold text-white">
+                  <h2 className="font-display text-2xl sm:text-3xl xl:text-4xl font-bold text-white">
                     Precision Code Meets Clear Human Storytelling.
                   </h2>
                 </div>
@@ -854,7 +854,7 @@ export default function App() {
                       className="w-full rounded-lg bg-[#05060a] border border-white/15 px-4 py-3 text-sm text-white focus:outline-none focus:border-[var(--accent)]"
                     >
                       {SERVICE_OPTIONS.map((opt) => (
-                        <option key={opt} value={opt}>
+                        <option key={opt} value={opt} className="bg-[#0a0c12] text-white">
                           {opt}
                         </option>
                       ))}
@@ -871,7 +871,7 @@ export default function App() {
                       className="w-full rounded-lg bg-[#05060a] border border-white/15 px-4 py-3 text-sm text-white focus:outline-none focus:border-[var(--accent)]"
                     >
                       {TIMELINE_OPTIONS.map((opt) => (
-                        <option key={opt} value={opt}>
+                        <option key={opt} value={opt} className="bg-[#0a0c12] text-white">
                           {opt}
                         </option>
                       ))}

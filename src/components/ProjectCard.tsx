@@ -14,6 +14,9 @@ export function ProjectCard({ project, featured = false, onSelect }: ProjectCard
   const [imgError, setImgError] = useState(false);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (typeof window !== 'undefined' && !window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      return;
+    }
     const el = cardRef.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
@@ -47,7 +50,9 @@ export function ProjectCard({ project, featured = false, onSelect }: ProjectCard
         })`,
       }}
       className={`group relative text-left rounded-2xl overflow-hidden bg-[#0c0e14] border border-white/12 hover:border-[var(--accent)] transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] ${
-        featured ? 'md:col-span-2 aspect-[16/10] md:aspect-[16/9]' : 'aspect-[4/3]'
+        featured
+          ? 'md:col-span-2 min-h-[250px] aspect-[4/3] sm:aspect-[16/10] md:aspect-[16/9]'
+          : 'min-h-[250px] aspect-[4/3]'
       }`}
     >
       {!imgError ? (
@@ -79,18 +84,18 @@ export function ProjectCard({ project, featured = false, onSelect }: ProjectCard
         }}
       />
 
-      <div className="relative z-10 h-full p-6 flex flex-col justify-end">
-        <div className="flex items-center justify-between gap-4 mb-2">
-          <p className="text-xs text-slate-300 font-medium truncate">
+      <div className="relative z-10 h-full p-4 sm:p-6 flex flex-col justify-end">
+        <div className="flex items-center justify-between gap-3 mb-1.5 sm:mb-2">
+          <p className="text-xs text-slate-300 font-medium truncate min-w-0">
             <span>{project.category}</span>
-            <span className="mx-2 text-slate-500" aria-hidden="true">
+            <span className="mx-1.5 sm:mx-2 text-slate-500" aria-hidden="true">
               ·
             </span>
             <span className="font-mono">{project.primaryLanguage}</span>
-            <span className="mx-2 text-slate-500" aria-hidden="true">
+            <span className="hidden sm:inline mx-2 text-slate-500" aria-hidden="true">
               ·
             </span>
-            <span className="font-mono">{project.repoName}</span>
+            <span className="hidden sm:inline font-mono">{project.repoName}</span>
           </p>
           <span className="inline-flex items-center gap-1.5 font-mono text-xs text-slate-300 shrink-0">
             <Heart className="w-3.5 h-3.5 text-[var(--accent)]" />
@@ -98,16 +103,16 @@ export function ProjectCard({ project, featured = false, onSelect }: ProjectCard
           </span>
         </div>
 
-        <div className="flex items-end justify-between gap-4">
-          <div>
-            <h3 className="font-display text-xl sm:text-2xl font-bold text-white group-hover:text-[var(--accent)] transition-colors">
+        <div className="flex items-end justify-between gap-3 sm:gap-4">
+          <div className="min-w-0">
+            <h3 className="font-display text-lg sm:text-2xl font-bold text-white group-hover:text-[var(--accent)] transition-colors truncate sm:whitespace-normal">
               {project.title}
             </h3>
-            <p className="text-sm text-slate-300 mt-1 line-clamp-2">{project.subtitle}</p>
+            <p className="text-xs sm:text-sm text-slate-300 mt-1 line-clamp-2">{project.subtitle}</p>
           </div>
           <span
             aria-hidden="true"
-            className="w-10 h-10 rounded-full border border-white/20 bg-black/50 flex items-center justify-center text-white group-hover:bg-[var(--accent)] group-hover:text-[#050507] group-hover:border-transparent transition-colors shrink-0"
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-white/20 bg-black/50 flex items-center justify-center text-white group-hover:bg-[var(--accent)] group-hover:text-[#050507] group-hover:border-transparent transition-colors shrink-0"
           >
             <ArrowUpRight className="w-4 h-4" />
           </span>

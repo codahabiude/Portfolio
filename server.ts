@@ -324,12 +324,14 @@ function parseGithubContributionsHtml(html: string): GitHubContributionsPayload 
   }
 
   // Current streak ending today (or yesterday if today has 0 commits so far)
+  const todayIso = new Date().toISOString().slice(0, 10);
   let currentStreak = 0;
   for (let i = days.length - 1; i >= 0; i--) {
     const d = days[i];
+    if (d.date > todayIso) continue;
     if (d.count > 0 || d.level > 0) {
       currentStreak += 1;
-    } else if (i === days.length - 1) {
+    } else if (d.date === todayIso) {
       continue;
     } else {
       break;
@@ -549,6 +551,16 @@ async function startServer(): Promise<void> {
         fetchLiveGithubRepos(forceSync),
       ]);
       const projects = mergeGithubIntoProjects(store.projects, ghRepos);
+      if (projects.length > store.projects.length) {
+        await enqueueStoreMutation((latestStore) => {
+          const existingIds = new Set(latestStore.projects.map((p) => p.id));
+          for (const proj of projects) {
+            if (!existingIds.has(proj.id)) {
+              latestStore.projects.push(proj);
+            }
+          }
+        });
+      }
       res.json({
         githubProfile: GITHUB_PROFILE_URL,
         syncedAt: lastSyncIso,

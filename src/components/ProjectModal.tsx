@@ -24,11 +24,16 @@ export function ProjectModal({
 
   useEffect(() => {
     if (!project) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
     window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener('keydown', onKeyDown);
+    };
   }, [project, onClose]);
 
   if (!project) return null;
@@ -55,7 +60,7 @@ export function ProjectModal({
         className="w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-2xl bg-[#0c0e14] border border-white/15 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="relative aspect-[4/3] w-full bg-[#11141e] overflow-hidden">
+        <div className="relative aspect-[16/10] sm:aspect-[16/9] min-h-[210px] w-full bg-[#11141e] overflow-hidden">
           {!imgError ? (
             <img
               src={project.imageUrl}
@@ -159,7 +164,7 @@ export function ProjectModal({
           </div>
 
           <div className="pt-4 border-t border-white/10 flex flex-wrap items-center justify-between gap-4">
-            <span className="font-mono text-xs text-slate-400">
+            <span className="font-mono text-xs text-slate-400 break-all sm:break-normal min-w-0">
               {project.views.toLocaleString()} views · github.com/codahabiude/{project.repoName}
             </span>
             <div className="flex flex-wrap items-center gap-3">

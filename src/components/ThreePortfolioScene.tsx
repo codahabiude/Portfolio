@@ -113,138 +113,156 @@ function createDialTexture(maxAnisotropy: number): THREE.CanvasTexture {
   return tex;
 }
 
-function createNameBandTexture(maxAnisotropy: number): THREE.CanvasTexture {
-  const width = 2048;
-  const height = 256;
-  const canvas = document.createElement('canvas');
-  canvas.width = width;
-  canvas.height = height;
+function drawNameBandCanvas(canvas: HTMLCanvasElement): void {
+  const width = canvas.width;
+  const height = canvas.height;
   const ctx = canvas.getContext('2d');
-  if (ctx) {
-    ctx.clearRect(0, 0, width, height);
+  if (!ctx) return;
 
-    ctx.fillStyle = 'rgba(7, 10, 16, 0.72)';
-    ctx.fillRect(0, 32, width, height - 64);
+  ctx.clearRect(0, 0, width, height);
 
-    ctx.strokeStyle = 'rgba(77, 255, 51, 0.5)';
-    ctx.lineWidth = 4;
-    ctx.beginPath();
-    ctx.moveTo(0, 34);
-    ctx.lineTo(width, 34);
-    ctx.stroke();
+  ctx.fillStyle = 'rgba(7, 10, 16, 0.72)';
+  ctx.fillRect(0, 32, width, height - 64);
 
-    ctx.strokeStyle = 'rgba(0, 204, 255, 0.5)';
-    ctx.beginPath();
-    ctx.moveTo(0, height - 34);
-    ctx.lineTo(width, height - 34);
-    ctx.stroke();
+  ctx.strokeStyle = 'rgba(77, 255, 51, 0.5)';
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(0, 34);
+  ctx.lineTo(width, 34);
+  ctx.stroke();
 
-    ctx.textBaseline = 'middle';
-    ctx.font = '700 84px "Chakra Petch", sans-serif';
+  ctx.strokeStyle = 'rgba(0, 204, 255, 0.5)';
+  ctx.beginPath();
+  ctx.moveTo(0, height - 34);
+  ctx.lineTo(width, height - 34);
+  ctx.stroke();
 
-    const repeats = 2;
-    const cellW = width / repeats;
-    for (let i = 0; i < repeats; i++) {
-      const centerX = cellW * i + cellW * 0.5;
-      const codahText = 'CODAH';
-      const abiudeText = 'ABIUDE';
-      const gap = 36;
-      const codahW = ctx.measureText(codahText).width;
-      const abiudeW = ctx.measureText(abiudeText).width;
-      const totalW = codahW + gap + abiudeW;
-      const startX = centerX - totalW / 2;
+  ctx.textBaseline = 'middle';
+  ctx.font = '700 84px "Chakra Petch", sans-serif';
 
-      const gGrad = ctx.createLinearGradient(startX, 60, startX + codahW, 196);
-      gGrad.addColorStop(0, '#b4ff4d');
-      gGrad.addColorStop(0.5, '#22e500');
-      gGrad.addColorStop(1, '#059669');
-      ctx.fillStyle = gGrad;
-      ctx.fillText(codahText, startX, height / 2 + 2);
-
-      const bGrad = ctx.createLinearGradient(
-        startX + codahW + gap,
-        60,
-        startX + totalW,
-        196
-      );
-      bGrad.addColorStop(0, '#67e8f9');
-      bGrad.addColorStop(0.5, '#00ccff');
-      bGrad.addColorStop(1, '#0284c7');
-      ctx.fillStyle = bGrad;
-      ctx.fillText(abiudeText, startX + codahW + gap, height / 2 + 2);
-
-      // Diamond divider
-      const divX = cellW * i + 40;
-      ctx.fillStyle = '#e2e8f0';
-      ctx.beginPath();
-      ctx.moveTo(divX, height / 2 - 14);
-      ctx.lineTo(divX + 14, height / 2);
-      ctx.lineTo(divX, height / 2 + 14);
-      ctx.lineTo(divX - 14, height / 2);
-      ctx.closePath();
-      ctx.fill();
-    }
-  }
-  const tex = new THREE.CanvasTexture(canvas);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  tex.wrapS = THREE.RepeatWrapping;
-  tex.wrapT = THREE.ClampToEdgeWrapping;
-  tex.anisotropy = maxAnisotropy;
-  return tex;
-}
-
-function createNamePlaqueTexture(maxAnisotropy: number): THREE.CanvasTexture {
-  const width = 1024;
-  const height = 220;
-  const canvas = document.createElement('canvas');
-  canvas.width = width;
-  canvas.height = height;
-  const ctx = canvas.getContext('2d');
-  if (ctx) {
-    ctx.clearRect(0, 0, width, height);
-
-    ctx.fillStyle = 'rgba(5, 7, 12, 0.78)';
-    ctx.beginPath();
-    ctx.roundRect(40, 28, width - 80, height - 56, 26);
-    ctx.fill();
-
-    ctx.strokeStyle = 'rgba(226, 232, 240, 0.28)';
-    ctx.lineWidth = 4;
-    ctx.stroke();
-
-    ctx.font = '700 94px "Chakra Petch", sans-serif';
-    ctx.textBaseline = 'middle';
+  const repeats = 2;
+  const cellW = width / repeats;
+  for (let i = 0; i < repeats; i++) {
+    const centerX = cellW * i + cellW * 0.5;
     const codahText = 'CODAH';
     const abiudeText = 'ABIUDE';
     const gap = 36;
     const codahW = ctx.measureText(codahText).width;
     const abiudeW = ctx.measureText(abiudeText).width;
     const totalW = codahW + gap + abiudeW;
-    const startX = (width - totalW) / 2;
+    const startX = centerX - totalW / 2;
 
-    const gGrad = ctx.createLinearGradient(startX, 50, startX + codahW, 170);
+    const gGrad = ctx.createLinearGradient(startX, 60, startX + codahW, 196);
     gGrad.addColorStop(0, '#b4ff4d');
-    gGrad.addColorStop(0.55, '#22e500');
-    gGrad.addColorStop(1, '#10b981');
+    gGrad.addColorStop(0.5, '#22e500');
+    gGrad.addColorStop(1, '#059669');
     ctx.fillStyle = gGrad;
-    ctx.fillText(codahText, startX, height / 2 + 3);
+    ctx.fillText(codahText, startX, height / 2 + 2);
 
     const bGrad = ctx.createLinearGradient(
       startX + codahW + gap,
-      50,
+      60,
       startX + totalW,
-      170
+      196
     );
-    bGrad.addColorStop(0, '#7dd3fc');
-    bGrad.addColorStop(0.55, '#00ccff');
+    bGrad.addColorStop(0, '#67e8f9');
+    bGrad.addColorStop(0.5, '#00ccff');
     bGrad.addColorStop(1, '#0284c7');
     ctx.fillStyle = bGrad;
-    ctx.fillText(abiudeText, startX + codahW + gap, height / 2 + 3);
+    ctx.fillText(abiudeText, startX + codahW + gap, height / 2 + 2);
+
+    // Diamond divider
+    const divX = cellW * i + 40;
+    ctx.fillStyle = '#e2e8f0';
+    ctx.beginPath();
+    ctx.moveTo(divX, height / 2 - 14);
+    ctx.lineTo(divX + 14, height / 2);
+    ctx.lineTo(divX, height / 2 + 14);
+    ctx.lineTo(divX - 14, height / 2);
+    ctx.closePath();
+    ctx.fill();
   }
-  const tex = new THREE.CanvasTexture(canvas);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  tex.anisotropy = maxAnisotropy;
-  return tex;
+}
+
+function createNameBandTexture(maxAnisotropy: number): {
+  canvas: HTMLCanvasElement;
+  texture: THREE.CanvasTexture;
+} {
+  const canvas = document.createElement('canvas');
+  canvas.width = 2048;
+  canvas.height = 256;
+  drawNameBandCanvas(canvas);
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.ClampToEdgeWrapping;
+  texture.anisotropy = maxAnisotropy;
+  return { canvas, texture };
+}
+
+function drawNamePlaqueCanvas(canvas: HTMLCanvasElement): void {
+  const width = canvas.width;
+  const height = canvas.height;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  ctx.clearRect(0, 0, width, height);
+
+  ctx.fillStyle = 'rgba(5, 7, 12, 0.78)';
+  ctx.beginPath();
+  if (typeof ctx.roundRect === 'function') {
+    ctx.roundRect(40, 28, width - 80, height - 56, 26);
+  } else {
+    ctx.rect(40, 28, width - 80, height - 56);
+  }
+  ctx.fill();
+
+  ctx.strokeStyle = 'rgba(226, 232, 240, 0.28)';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+
+  ctx.font = '700 94px "Chakra Petch", sans-serif';
+  ctx.textBaseline = 'middle';
+  const codahText = 'CODAH';
+  const abiudeText = 'ABIUDE';
+  const gap = 36;
+  const codahW = ctx.measureText(codahText).width;
+  const abiudeW = ctx.measureText(abiudeText).width;
+  const totalW = codahW + gap + abiudeW;
+  const startX = (width - totalW) / 2;
+
+  const gGrad = ctx.createLinearGradient(startX, 50, startX + codahW, 170);
+  gGrad.addColorStop(0, '#b4ff4d');
+  gGrad.addColorStop(0.55, '#22e500');
+  gGrad.addColorStop(1, '#10b981');
+  ctx.fillStyle = gGrad;
+  ctx.fillText(codahText, startX, height / 2 + 3);
+
+  const bGrad = ctx.createLinearGradient(
+    startX + codahW + gap,
+    50,
+    startX + totalW,
+    170
+  );
+  bGrad.addColorStop(0, '#7dd3fc');
+  bGrad.addColorStop(0.55, '#00ccff');
+  bGrad.addColorStop(1, '#0284c7');
+  ctx.fillStyle = bGrad;
+  ctx.fillText(abiudeText, startX + codahW + gap, height / 2 + 3);
+}
+
+function createNamePlaqueTexture(maxAnisotropy: number): {
+  canvas: HTMLCanvasElement;
+  texture: THREE.CanvasTexture;
+} {
+  const canvas = document.createElement('canvas');
+  canvas.width = 1024;
+  canvas.height = 220;
+  drawNamePlaqueCanvas(canvas);
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.anisotropy = maxAnisotropy;
+  return { canvas, texture };
 }
 
 function createLogoGeometries() {
@@ -412,8 +430,10 @@ export function ThreePortfolioScene({ activeSection, controls }: ThreePortfolioS
     const maxAnisotropy = renderer.capabilities.getMaxAnisotropy();
     const gridTexture = createGridTexture(maxAnisotropy);
     const dialTexture = createDialTexture(maxAnisotropy);
-    const nameBandTexture = createNameBandTexture(maxAnisotropy);
-    const namePlaqueTexture = createNamePlaqueTexture(maxAnisotropy);
+    const { canvas: nameBandCanvas, texture: nameBandTexture } =
+      createNameBandTexture(maxAnisotropy);
+    const { canvas: namePlaqueCanvas, texture: namePlaqueTexture } =
+      createNamePlaqueTexture(maxAnisotropy);
 
     // Architectural ground spatial grid
     const gridGeo = new THREE.PlaneGeometry(46, 46);
@@ -699,6 +719,7 @@ export function ThreePortfolioScene({ activeSection, controls }: ThreePortfolioS
       const h = container.clientHeight || window.innerHeight;
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
+      renderer.setPixelRatio(isSoftwareGl ? 1 : Math.min(window.devicePixelRatio, 2));
       renderer.setSize(w, h);
     };
     window.addEventListener('resize', onResize);
@@ -708,6 +729,17 @@ export function ThreePortfolioScene({ activeSection, controls }: ThreePortfolioS
     let disposed = false;
     let currentExplode = 0;
     let lastTime = performance.now();
+
+    // Redraw 3D nameplate textures once Chakra Petch webfont finishes loading
+    if (document.fonts?.ready) {
+      void document.fonts.ready.then(() => {
+        if (disposed) return;
+        drawNameBandCanvas(nameBandCanvas);
+        nameBandTexture.needsUpdate = true;
+        drawNamePlaqueCanvas(namePlaqueCanvas);
+        namePlaqueTexture.needsUpdate = true;
+      });
+    }
 
     function afterDraw(cb: () => void) {
       const gl = renderer.getContext() as WebGL2RenderingContext;
@@ -797,11 +829,13 @@ export function ThreePortfolioScene({ activeSection, controls }: ThreePortfolioS
       const preset = SECTION_CAMERA[sec] ?? SECTION_CAMERA.home;
       const parallaxX = prefersReducedMotion ? 0 : pointer.x * 0.42;
       const parallaxY = prefersReducedMotion ? 0 : pointer.y * 0.26;
+      const portraitZoomOut =
+        camera.aspect < 1 ? (1 / Math.max(camera.aspect, 0.45) - 1) * 3.6 : 0;
 
       _camGoal.set(
         (isNarrow ? 0 : preset.x) + parallaxX,
         preset.y + parallaxY,
-        isNarrow ? preset.z + 1.8 : preset.z
+        (isNarrow ? preset.z + 1.6 : preset.z) + portraitZoomOut
       );
       camera.position.x = THREE.MathUtils.damp(camera.position.x, _camGoal.x, 4.2, delta);
       camera.position.y = THREE.MathUtils.damp(camera.position.y, _camGoal.y, 4.2, delta);

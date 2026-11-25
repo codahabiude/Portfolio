@@ -1,5 +1,5 @@
 import { ExternalLink, RefreshCw } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type {
   GitHubContributionDay,
   GitHubContributionsPayload,
@@ -49,6 +49,7 @@ function formatDisplayDate(dateStr: string): string {
 }
 
 export function GitHubContributionHeatmap() {
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const [data, setData] = useState<GitHubContributionsPayload | null>(null);
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
@@ -83,6 +84,14 @@ export function GitHubContributionHeatmap() {
   useEffect(() => {
     loadContributions(false);
   }, [loadContributions]);
+
+  useEffect(() => {
+    const el = scrollContainerRef.current;
+    if (!el || !data) return;
+    if (el.scrollWidth > el.clientWidth) {
+      el.scrollLeft = el.scrollWidth;
+    }
+  }, [data]);
 
   const { weeks, monthLabels } = useMemo(() => {
     if (!data || data.days.length === 0) {
@@ -223,7 +232,7 @@ export function GitHubContributionHeatmap() {
 
           {/* Interactive Calendar Heatmap Grid */}
           <div className="rounded-xl bg-[#06080d] border border-white/10 p-4 sm:p-5">
-            <div className="overflow-x-auto pb-2">
+            <div ref={scrollContainerRef} className="overflow-x-auto pb-2">
               <div className="inline-block min-w-max">
                 {/* Month Headers */}
                 <div className="flex items-center mb-2 pl-9">
@@ -324,7 +333,7 @@ export function GitHubContributionHeatmap() {
                 )}
               </div>
 
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex flex-wrap items-center gap-2 shrink-0">
                 <button
                   type="button"
                   onClick={() => setActiveLevelFilter(null)}
