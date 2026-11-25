@@ -1,5 +1,5 @@
 import type { ServerResponse } from 'node:http';
-import { sendJson, type ServerlessRequest } from './_lib/http';
+import { sendJson, type ServerlessRequest } from './_lib/http.js';
 
 export default function handler(req: ServerlessRequest, res: ServerResponse): void {
   if (req.method !== 'GET') {

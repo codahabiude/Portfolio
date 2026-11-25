@@ -4,12 +4,12 @@ import {
   readJsonBody,
   sendJson,
   type ServerlessRequest,
-} from './_lib/http';
+} from './_lib/http.js';
 import {
   createInquiryRecord,
   isRateLimited,
   validateInquiryInput,
-} from './_lib/portfolioCore';
+} from './_lib/portfolioCore.js';
 
 export default async function handler(
   req: ServerlessRequest,

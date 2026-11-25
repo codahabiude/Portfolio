@@ -1,6 +1,6 @@
 import type { ServerResponse } from 'node:http';
-import { getQueryParam, sendJson, type ServerlessRequest } from '../../_lib/http';
-import { cleanText, recordProjectView } from '../../_lib/portfolioCore';
+import { getProjectIdFromReq, sendJson, type ServerlessRequest } from '../../_lib/http.js';
+import { cleanText, recordProjectView } from '../../_lib/portfolioCore.js';
 
 export default async function handler(
   req: ServerlessRequest,
@@ -10,7 +10,7 @@ export default async function handler(
     sendJson(res, 405, { error: 'Method not allowed.' });
     return;
   }
-  const projectId = cleanText(getQueryParam(req, 'id'), 64);
+  const projectId = cleanText(getProjectIdFromReq(req), 64);
   if (!/^[a-z0-9-]+$/.test(projectId)) {
     sendJson(res, 400, { error: 'Invalid project identifier.' });
     return;

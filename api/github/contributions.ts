@@ -1,6 +1,6 @@
 import type { ServerResponse } from 'node:http';
-import { getQueryParam, sendJson, type ServerlessRequest } from '../_lib/http';
-import { fetchGithubContributions } from '../_lib/portfolioCore';
+import { getQueryParam, sendJson, type ServerlessRequest } from '../_lib/http.js';
+import { fetchGithubContributions } from '../_lib/portfolioCore.js';
 
 export default async function handler(
   req: ServerlessRequest,

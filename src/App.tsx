@@ -21,6 +21,13 @@ import { Navbar } from './components/Navbar.tsx';
 import { ProjectCard } from './components/ProjectCard.tsx';
 import { ProjectModal } from './components/ProjectModal.tsx';
 import { ThreePortfolioScene } from './components/ThreePortfolioScene.tsx';
+import {
+  CAPABILITIES as FALLBACK_CAPABILITIES,
+  fetchBrowserGithubRepos,
+  INITIAL_PROJECTS as FALLBACK_PROJECTS,
+  mergeGithubReposIntoProjects,
+  SERVICES as FALLBACK_SERVICES,
+} from './data/portfolioCatalog.ts';
 import type {
   CapabilityMetric,
   InquirySubmissionResult,
@@ -166,26 +173,78 @@ export default function App() {
       if (forceSync) setSyncingGithub(true);
       else setLoadingPortfolio(true);
       setPortfolioError(null);
+
+      let apiPayload: PortfolioPayload | null = null;
       try {
         const url = forceSync ? '/api/portfolio?sync=1' : '/api/portfolio';
         const res = await fetch(url);
-        if (!res.ok) throw new Error('Unable to load portfolio data');
-        const data = (await res.json()) as PortfolioPayload;
-        setProjects(data.projects);
-        setServices(data.services);
-        setCapabilities(data.capabilities);
-        if (data.githubProfile) setGithubProfile(data.githubProfile);
-        if (forceSync) pushToast('Synced repositories from github.com/codahabiude.');
-      } catch {
-        if (forceSync) {
-          pushToast('GitHub sync could not reach api.github.com right now.', 'error');
-        } else {
-          setPortfolioError('Could not connect to portfolio API. Please retry.');
+        if (res.ok) {
+          const contentType = res.headers.get('content-type') || '';
+          if (contentType.includes('application/json')) {
+            const parsed = (await res.json()) as PortfolioPayload;
+            if (Array.isArray(parsed.projects) && parsed.projects.length > 0) {
+              apiPayload = parsed;
+            }
+          }
         }
-      } finally {
+      } catch {
+        // Fall through to browser-direct GitHub sync
+      }
+
+      if (apiPayload) {
+        let resolvedProjects = apiPayload.projects;
+        let syncedFromGithub = Boolean(apiPayload.syncedAt);
+
+        if (!syncedFromGithub || forceSync) {
+          const browserRepos = await fetchBrowserGithubRepos();
+          if (browserRepos && browserRepos.length > 0) {
+            resolvedProjects = mergeGithubReposIntoProjects(
+              resolvedProjects,
+              browserRepos
+            );
+            syncedFromGithub = true;
+          }
+        }
+
+        setProjects(resolvedProjects);
+        setServices(
+          apiPayload.services?.length ? apiPayload.services : FALLBACK_SERVICES
+        );
+        setCapabilities(
+          apiPayload.capabilities?.length
+            ? apiPayload.capabilities
+            : FALLBACK_CAPABILITIES
+        );
+        if (apiPayload.githubProfile) setGithubProfile(apiPayload.githubProfile);
+
+        if (forceSync) {
+          if (syncedFromGithub) {
+            pushToast('Synced repositories from github.com/codahabiude.');
+          } else {
+            pushToast('GitHub sync could not reach api.github.com right now.', 'error');
+          }
+        }
         setLoadingPortfolio(false);
         setSyncingGithub(false);
+        return;
       }
+
+      // Direct browser fallback if /api/portfolio is unavailable on static/serverless hosting
+      const browserRepos = await fetchBrowserGithubRepos();
+      const mergedProjects = mergeGithubReposIntoProjects(FALLBACK_PROJECTS, browserRepos);
+      setProjects(mergedProjects);
+      setServices(FALLBACK_SERVICES);
+      setCapabilities(FALLBACK_CAPABILITIES);
+
+      if (forceSync) {
+        if (browserRepos && browserRepos.length > 0) {
+          pushToast('Synced repositories from github.com/codahabiude.');
+        } else {
+          pushToast('GitHub sync could not reach api.github.com right now.', 'error');
+        }
+      }
+      setLoadingPortfolio(false);
+      setSyncingGithub(false);
     },
     [pushToast]
   );

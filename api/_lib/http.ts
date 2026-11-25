@@ -1,3 +1,4 @@
+import { Buffer } from 'node:buffer';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 
 export interface ServerlessRequest extends IncomingMessage {
@@ -23,6 +24,13 @@ export function getQueryParam(req: ServerlessRequest, key: string): string {
   } catch {
     return '';
   }
+}
+
+export function getProjectIdFromReq(req: ServerlessRequest): string {
+  const fromQuery = getQueryParam(req, 'id');
+  if (fromQuery) return fromQuery;
+  const match = (req.url || '').match(/\/api\/projects\/([^/?#]+)\//);
+  return match ? decodeURIComponent(match[1]) : '';
 }
 
 export function getClientIp(req: ServerlessRequest): string {

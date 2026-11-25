@@ -370,6 +370,7 @@ export async function fetchGithubContributions(
   if (!force && cachedContributions && now - cachedContributionsAt < GITHUB_CACHE_TTL_MS) {
     return cachedContributions;
   }
+
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 5000);
   try {
@@ -380,17 +381,97 @@ export async function fetchGithubContributions(
       },
       signal: controller.signal,
     });
+    if (res.ok) {
+      const html = await res.text();
+      const parsed = parseGithubContributionsHtml(html);
+      if (parsed) {
+        cachedContributions = parsed;
+        cachedContributionsAt = now;
+        return parsed;
+      }
+    }
+  } catch {
+    // Fall through to JSON fallback
+  } finally {
+    clearTimeout(timeout);
+  }
+
+  const fallbackController = new AbortController();
+  const fallbackTimeout = setTimeout(() => fallbackController.abort(), 5000);
+  try {
+    const res = await fetch(
+      `https://github-contributions-api.jogruber.de/v4/${GITHUB_USER}?y=last`,
+      {
+        headers: { 'User-Agent': 'codahabiude-portfolio-server', Accept: 'application/json' },
+        signal: fallbackController.signal,
+      }
+    );
     if (!res.ok) return cachedContributions;
-    const html = await res.text();
-    const parsed = parseGithubContributionsHtml(html);
-    if (!parsed) return cachedContributions;
+    const json = (await res.json()) as {
+      total?: { lastYear?: number };
+      contributions?: Array<{ date: string; count: number; level: number }>;
+    };
+    if (!Array.isArray(json.contributions) || json.contributions.length === 0) {
+      return cachedContributions;
+    }
+
+    const dayMap = new Map<string, GitHubContributionDay>();
+    for (const item of json.contributions) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(item.date)) continue;
+      const lvl = Math.max(0, Math.min(4, Math.round(Number(item.level) || 0))) as
+        | 0
+        | 1
+        | 2
+        | 3
+        | 4;
+      const count = Math.max(0, Math.round(Number(item.count) || 0));
+      const weekday = new Date(`${item.date}T00:00:00Z`).getUTCDay();
+      dayMap.set(item.date, { date: item.date, count, level: lvl, weekday });
+    }
+    if (dayMap.size === 0) return cachedContributions;
+
+    const days = Array.from(dayMap.values()).sort((a, b) => a.date.localeCompare(b.date));
+    let activeDays = 0;
+    let sumCounts = 0;
+    let longestStreak = 0;
+    let runningStreak = 0;
+    for (const day of days) {
+      sumCounts += day.count;
+      if (day.count > 0 || day.level > 0) {
+        activeDays += 1;
+        runningStreak += 1;
+        if (runningStreak > longestStreak) longestStreak = runningStreak;
+      } else {
+        runningStreak = 0;
+      }
+    }
+    const todayIso = new Date().toISOString().slice(0, 10);
+    let currentStreak = 0;
+    for (let i = days.length - 1; i >= 0; i--) {
+      const d = days[i];
+      if (d.date > todayIso) continue;
+      if (d.count > 0 || d.level > 0) currentStreak += 1;
+      else if (d.date === todayIso) continue;
+      else break;
+    }
+
+    const parsed: GitHubContributionsPayload = {
+      username: GITHUB_USER,
+      profileUrl: GITHUB_PROFILE_URL,
+      totalContributions: Math.max(Number(json.total?.lastYear) || 0, sumCounts),
+      activeDays,
+      longestStreak,
+      currentStreak,
+      fetchedAt: new Date().toISOString(),
+      days,
+    };
     cachedContributions = parsed;
     cachedContributionsAt = now;
     return parsed;
   } catch {
     return cachedContributions;
   } finally {
-    clearTimeout(timeout);
+    clearTimeout(fallbackTimeout);
   }
 }
 

@@ -4,6 +4,7 @@ import type {
   GitHubContributionDay,
   GitHubContributionsPayload,
 } from '../types/portfolio.ts';
+import { fetchBrowserGithubContributions } from '../data/portfolioCatalog.ts';
 import { GitHubLogo } from './BrandMarks.tsx';
 
 const MONTH_NAMES = [
@@ -61,24 +62,42 @@ export function GitHubContributionHeatmap() {
     if (forceSync) setSyncing(true);
     else setLoading(true);
     setError(null);
+
+    let payload: GitHubContributionsPayload | null = null;
     try {
       const url = forceSync
         ? '/api/github/contributions?sync=1'
         : '/api/github/contributions';
       const res = await fetch(url);
-      if (!res.ok) throw new Error('Unable to fetch GitHub contributions');
-      const payload = (await res.json()) as GitHubContributionsPayload;
+      if (res.ok) {
+        const contentType = res.headers.get('content-type') || '';
+        if (contentType.includes('application/json')) {
+          const parsed = (await res.json()) as GitHubContributionsPayload;
+          if (Array.isArray(parsed.days) && parsed.days.length > 0) {
+            payload = parsed;
+          }
+        }
+      }
+    } catch {
+      // Fall through to browser-direct GitHub contributions fallback
+    }
+
+    if (!payload) {
+      payload = await fetchBrowserGithubContributions();
+    }
+
+    if (payload && Array.isArray(payload.days) && payload.days.length > 0) {
       setData(payload);
       const latestActive = [...payload.days]
         .reverse()
         .find((d) => d.count > 0 || d.level > 0);
       setSelectedDay(latestActive ?? payload.days[payload.days.length - 1] ?? null);
-    } catch {
+    } else {
       setError('Could not load live GitHub contribution calendar.');
-    } finally {
-      setLoading(false);
-      setSyncing(false);
     }
+
+    setLoading(false);
+    setSyncing(false);
   }, []);
 
   useEffect(() => {
