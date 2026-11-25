@@ -1,10 +1,10 @@
 import { ExternalLink, RefreshCw } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type {
-  GitHubContributionDay,
-  GitHubContributionsPayload,
+import {
+  fetchBrowserGithubContributions,
+  type GitHubContributionDay,
+  type GitHubContributionsPayload,
 } from '../types/portfolio.ts';
-import { fetchBrowserGithubContributions } from '../data/portfolioCatalog.ts';
 import { GitHubLogo } from './BrandMarks.tsx';
 
 const MONTH_NAMES = [

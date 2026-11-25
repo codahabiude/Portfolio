@@ -22,21 +22,19 @@ import { ProjectCard } from './components/ProjectCard.tsx';
 import { ProjectModal } from './components/ProjectModal.tsx';
 import { ThreePortfolioScene } from './components/ThreePortfolioScene.tsx';
 import {
-  CAPABILITIES as FALLBACK_CAPABILITIES,
+  type CapabilityMetric,
+  FALLBACK_CAPABILITIES,
+  FALLBACK_PROJECTS,
+  FALLBACK_SERVICES,
   fetchBrowserGithubRepos,
-  INITIAL_PROJECTS as FALLBACK_PROJECTS,
+  type InquirySubmissionResult,
   mergeGithubReposIntoProjects,
-  SERVICES as FALLBACK_SERVICES,
-} from './data/portfolioCatalog.ts';
-import type {
-  CapabilityMetric,
-  InquirySubmissionResult,
-  PortfolioPayload,
-  PortfolioProject,
-  ProjectCategory,
-  SceneControlState,
-  SectionId,
-  ServiceItem,
+  type PortfolioPayload,
+  type PortfolioProject,
+  type ProjectCategory,
+  type SceneControlState,
+  type SectionId,
+  type ServiceItem,
 } from './types/portfolio.ts';
 
 const SECTION_ACCENTS: Record<SectionId, string> = {
