@@ -2,17 +2,19 @@ import {
   ArrowRight,
   ArrowUp,
   RefreshCw,
-  Search,
   Send,
 } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ArchitectureSmartArt } from './components/ArchitectureSmartArt.tsx';
 import {
+  CodahEmblemMark,
+  CodahFullLogo,
   EmailLogo,
   FacebookLogo,
   GitHubLogo,
   InstagramLogo,
   LinkedInLogo,
+  XLogo,
 } from './components/BrandMarks.tsx';
 import { Navbar } from './components/Navbar.tsx';
 import { ProjectCard } from './components/ProjectCard.tsx';
@@ -20,7 +22,6 @@ import { ProjectModal } from './components/ProjectModal.tsx';
 import { ThreePortfolioScene } from './components/ThreePortfolioScene.tsx';
 import type {
   CapabilityMetric,
-  InquiryStatusResponse,
   InquirySubmissionResult,
   PortfolioPayload,
   PortfolioProject,
@@ -69,6 +70,13 @@ const SOCIAL_CHANNELS = [
     handle: 'Codah Abiude',
     href: 'https://www.linkedin.com/in/codah-abiude-a67360447/',
     Logo: LinkedInLogo,
+    external: true,
+  },
+  {
+    name: 'X',
+    handle: '@CodahAbiude',
+    href: 'https://x.com/CodahAbiude',
+    Logo: XLogo,
     external: true,
   },
   {
@@ -132,12 +140,6 @@ export default function App() {
   const [submissionResult, setSubmissionResult] = useState<InquirySubmissionResult | null>(
     null
   );
-
-  // Inquiry status lookup state
-  const [lookupRef, setLookupRef] = useState('');
-  const [lookupLoading, setLookupLoading] = useState(false);
-  const [lookupResult, setLookupResult] = useState<InquiryStatusResponse | null>(null);
-  const [lookupError, setLookupError] = useState<string | null>(null);
 
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [toasts, setToasts] = useState<ToastItem[]>([]);
@@ -301,7 +303,6 @@ export default function App() {
       }
       const result = payload as InquirySubmissionResult;
       setSubmissionResult(result);
-      setLookupRef(result.referenceId);
       setName('');
       setEmail('');
       setDetails('');
@@ -310,28 +311,6 @@ export default function App() {
       pushToast('Network error submitting your inquiry.', 'error');
     } finally {
       setSubmitting(false);
-    }
-  };
-
-  const handleLookupStatus = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const cleaned = lookupRef.trim().toUpperCase();
-    if (!cleaned) return;
-    setLookupLoading(true);
-    setLookupError(null);
-    setLookupResult(null);
-    try {
-      const res = await fetch(`/api/inquiries/status/${encodeURIComponent(cleaned)}`);
-      const payload = await res.json();
-      if (!res.ok) {
-        setLookupError(payload.error || 'Reference ID not found.');
-        return;
-      }
-      setLookupResult(payload as InquiryStatusResponse);
-    } catch {
-      setLookupError('Unable to check status right now.');
-    } finally {
-      setLookupLoading(false);
     }
   };
 
@@ -443,16 +422,8 @@ export default function App() {
                     className="w-full h-full object-cover object-top"
                   />
                 ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center p-8 bg-[linear-gradient(135deg,#0d141d,#090b10)]">
-                    <img
-                      src="/assets/aistudio/codah_logo_47519e04.png"
-                      alt="Codah Abiude Logo"
-                      referrerPolicy="no-referrer"
-                      className="w-24 h-24 object-contain mb-4"
-                    />
-                    <span className="font-display text-lg font-semibold text-white">
-                      Codah Abiude
-                    </span>
+                  <div className="w-full h-full flex flex-col items-center justify-center p-8 bg-[#05060a]">
+                    <CodahFullLogo className="p-4 rounded-2xl border border-white/15 bg-[#050507] shadow-[0_0_24px_rgba(0,255,136,0.2)]" />
                   </div>
                 )}
 
@@ -467,12 +438,9 @@ export default function App() {
                       Available for bespoke web &amp; 3D architecture
                     </p>
                   </div>
-                  <img
-                    src="/assets/aistudio/codah_logo_47519e04.png"
-                    alt="CA emblem"
-                    referrerPolicy="no-referrer"
-                    className="w-11 h-11 rounded-full bg-white p-0.5 object-cover shrink-0"
-                  />
+                  <div className="w-15 h-15 rounded-full bg-[#050507]/85 border border-white/20 p-1 flex items-center justify-center shadow-[0_0_20px_rgba(0,255,136,0.28)] shrink-0">
+                    <CodahEmblemMark className="w-full h-full" />
+                  </div>
                 </div>
               </div>
             </div>
@@ -698,10 +666,15 @@ export default function App() {
         >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
             <div className="lg:col-span-6 rounded-2xl bg-[#0a0c12]/92 border border-white/12 p-7 sm:p-10">
-              <p className="text-xs font-medium text-[var(--accent)] mb-2">About Me</p>
-              <h2 className="font-display text-3xl sm:text-4xl font-bold text-white mb-6">
-                Precision Code Meets Clear Human Storytelling.
-              </h2>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-6 mb-6">
+                <CodahFullLogo className="p-4 rounded-2xl border border-white/15 bg-[#050507] shadow-[0_0_24px_rgba(0,255,136,0.18)] shrink-0" />
+                <div>
+                  <p className="text-xs font-medium text-[var(--accent)] mb-2">About Me</p>
+                  <h2 className="font-display text-3xl sm:text-4xl font-bold text-white">
+                    Precision Code Meets Clear Human Storytelling.
+                  </h2>
+                </div>
+              </div>
 
               <div className="space-y-4 text-sm sm:text-base text-slate-300 leading-relaxed">
                 <p>
@@ -767,49 +740,49 @@ export default function App() {
           className="py-16 scroll-mt-24 border-t border-white/10"
         >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            {/* Left Column: Personal Focus + Visual Social Channels + Status Lookup */}
+            {/* Left Column: Personal Focus + Visual Social Channels */}
             <div className="lg:col-span-6 space-y-6">
-              <div className="rounded-2xl bg-[#0a0c12]/92 border border-white/12 p-7 sm:p-9">
-                <p className="text-xs font-medium text-[var(--accent)] mb-2">
-                  Work With Codah Abiude
-                </p>
-                <h2 className="font-display text-3xl sm:text-4xl font-bold text-white leading-tight mb-4">
-                  Let&apos;s Build Something Impressive.
-                </h2>
-                <p className="text-sm sm:text-base text-slate-300 leading-relaxed mb-8">
-                  Whether you are launching a full-stack web platform, a peer-to-peer
-                  mobile experience, or a Three.js interactive showcase, I collaborate
-                  closely from first whiteboard sketch to production release.
-                </p>
+              <div className="rounded-2xl bg-[#0a0c12]/92 border border-white/12 p-7 sm:p-9 h-full flex flex-col justify-between">
+                <div>
+                  <p className="text-xs font-medium text-[var(--accent)] mb-2">
+                    Work With Codah Abiude
+                  </p>
+                  <h2 className="font-display text-3xl sm:text-4xl font-bold text-white leading-tight mb-4">
+                    Let&apos;s Build Something Impressive.
+                  </h2>
+                  <p className="text-sm sm:text-base text-slate-300 leading-relaxed mb-8">
+                    Whether you are launching a full-stack web platform, a peer-to-peer
+                    mobile experience, or a Three.js interactive showcase, I collaborate
+                    closely from first whiteboard sketch to production release.
+                  </p>
 
-                <h3 className="font-display text-sm font-semibold text-white mb-4">
-                  Connect Directly
-                </h3>
+                  <h3 className="font-display text-sm font-semibold text-white mb-4">
+                    Connect Directly
+                  </h3>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
-                  {SOCIAL_CHANNELS.map(({ name, handle, href, Logo, external }) => (
-                    <a
-                      key={name}
-                      href={href}
-                      target={external ? '_blank' : undefined}
-                      rel={external ? 'noreferrer' : undefined}
-                      className={`group rounded-xl bg-[#06080d] border border-white/12 p-3.5 flex items-center gap-3.5 hover:border-[var(--accent)] transition-colors ${
-                        name === 'Email' ? 'sm:col-span-2' : ''
-                      }`}
-                    >
-                      <span className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[var(--accent)] group-hover:bg-[var(--accent)] group-hover:text-[#050507] transition-colors shrink-0">
-                        <Logo className="w-5 h-5" />
-                      </span>
-                      <span className="min-w-0">
-                        <span className="block font-display text-sm font-bold text-white group-hover:text-[var(--accent)] transition-colors">
-                          {name}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+                    {SOCIAL_CHANNELS.map(({ name, handle, href, Logo, external }) => (
+                      <a
+                        key={name}
+                        href={href}
+                        target={external ? '_blank' : undefined}
+                        rel={external ? 'noreferrer' : undefined}
+                        className="group rounded-xl bg-[#06080d] border border-white/12 p-3.5 flex items-center gap-3.5 hover:border-[var(--accent)] transition-colors"
+                      >
+                        <span className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[var(--accent)] group-hover:bg-[var(--accent)] group-hover:text-[#050507] transition-colors shrink-0">
+                          <Logo className="w-5 h-5" />
                         </span>
-                        <span className="block font-mono text-xs text-slate-400 truncate">
-                          {handle}
+                        <span className="min-w-0">
+                          <span className="block font-display text-sm font-bold text-white group-hover:text-[var(--accent)] transition-colors">
+                            {name}
+                          </span>
+                          <span className="block font-mono text-xs text-slate-400 truncate">
+                            {handle}
+                          </span>
                         </span>
-                      </span>
-                    </a>
-                  ))}
+                      </a>
+                    ))}
+                  </div>
                 </div>
 
                 <div className="rounded-xl bg-[#06080d] border border-white/12 p-4">
@@ -822,52 +795,6 @@ export default function App() {
                     transparent.
                   </p>
                 </div>
-              </div>
-
-              {/* Inquiry Reference Tracker */}
-              <div className="rounded-2xl bg-[#0a0c12]/92 border border-white/12 p-6">
-                <h3 className="font-display text-sm font-semibold text-white mb-2">
-                  Verify Inquiry Reference
-                </h3>
-                <p className="text-xs text-slate-400 mb-4">
-                  Enter a submitted reference ID (e.g. REQ-2026-XXXXXX) to confirm server
-                  receipt status.
-                </p>
-                <form onSubmit={handleLookupStatus} className="flex gap-2">
-                  <input
-                    type="text"
-                    value={lookupRef}
-                    onChange={(e) => setLookupRef(e.target.value)}
-                    placeholder="REQ-2026-XXXXXX"
-                    aria-label="Inquiry Reference ID"
-                    className="flex-1 min-w-0 rounded-lg bg-[#05060a] border border-white/15 px-3.5 py-2.5 font-mono text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-[var(--accent)]"
-                  />
-                  <button
-                    type="submit"
-                    disabled={lookupLoading}
-                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg border border-white/15 bg-white/5 text-xs font-semibold text-white hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors whitespace-nowrap shrink-0"
-                  >
-                    <Search className="w-3.5 h-3.5" />
-                    <span>{lookupLoading ? 'Checking...' : 'Check'}</span>
-                  </button>
-                </form>
-
-                {lookupError && (
-                  <p className="mt-3 text-xs text-rose-300">{lookupError}</p>
-                )}
-                {lookupResult && (
-                  <div className="mt-4 rounded-lg bg-[#06080d] border border-white/12 p-3.5 text-xs space-y-1">
-                    <div className="flex items-center justify-between gap-4">
-                      <span className="font-mono text-white">{lookupResult.referenceId}</span>
-                      <span className="font-semibold text-[var(--accent)]">
-                        {lookupResult.status}
-                      </span>
-                    </div>
-                    <p className="text-slate-400">
-                      {lookupResult.service} · {lookupResult.estimatedResponse}
-                    </p>
-                  </div>
-                )}
               </div>
             </div>
 
@@ -997,12 +924,7 @@ export default function App() {
         {/* === FOOTER === */}
         <footer className="mt-12 pt-10 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-6 text-xs text-slate-400">
           <div className="flex items-center gap-3">
-            <img
-              src="/assets/aistudio/codah_logo_47519e04.png"
-              alt="Codah Abiude logo"
-              referrerPolicy="no-referrer"
-              className="w-7 h-7 rounded-full bg-white p-0.5 object-cover"
-            />
+            <CodahEmblemMark className="w-10 h-10 shrink-0 drop-shadow-[0_0_12px_rgba(0,255,136,0.2)]" />
             <span>&copy; 2026 Codah Abiude · Built in Kenya</span>
           </div>
 

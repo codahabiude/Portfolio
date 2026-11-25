@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" fill="none">
+  <defs>
+    <radialGradient id="bgGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#0d1520" />
+      <stop offset="72%" stop-color="#06090e" />
+      <stop offset="100%" stop-color="#050507" />
+    </radialGradient>
+    <linearGradient id="greenRing" x1="20" y1="30" x2="115" y2="165" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#a3ff33" />
+      <stop offset="48%" stop-color="#22e500" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+    <linearGradient id="blueRing" x1="120" y1="210" x2="215" y2="120" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="55%" stop-color="#00ccff" />
+      <stop offset="100%" stop-color="#67e8f9" />
+    </linearGradient>
+    <linearGradient id="chromeArc" x1="100" y1="20" x2="210" y2="120" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#f8fafc" />
+      <stop offset="45%" stop-color="#94a3b8" />
+      <stop offset="100%" stop-color="#334155" />
+    </linearGradient>
+    <linearGradient id="greenC" x1="48" y1="62" x2="116" y2="176" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#b4ff4d" />
+      <stop offset="45%" stop-color="#22e500" />
+      <stop offset="100%" stop-color="#047857" />
+    </linearGradient>
+    <linearGradient id="chromeA" x1="108" y1="64" x2="168" y2="174" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="40%" stop-color="#cbd5e1" />
+      <stop offset="78%" stop-color="#475569" />
+      <stop offset="100%" stop-color="#38bdf8" />
+    </linearGradient>
+    <linearGradient id="spearTop" x1="78" y1="115" x2="218" y2="115" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#64748b" />
+      <stop offset="45%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#cbd5e1" />
+    </linearGradient>
+    <linearGradient id="spearBottom" x1="78" y1="125" x2="218" y2="125" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1e293b" />
+      <stop offset="60%" stop-color="#475569" />
+      <stop offset="100%" stop-color="#94a3b8" />
+    </linearGradient>
+  </defs>
+
+  <circle cx="120" cy="120" r="116" fill="url(#bgGlow)" />
+
+  <!-- Outer segmented metallic arcs -->
+  <path
+    d="M 28 124 A 92 92 0 0 1 132 29"
+    stroke="url(#greenRing)"
+    stroke-width="7.5"
+    stroke-linecap="round"
+  />
+  <path
+    d="M 42 126 A 78 78 0 0 1 124 42"
+    stroke="#86efac"
+    stroke-opacity="0.65"
+    stroke-width="2.2"
+    stroke-linecap="round"
+  />
+  <path
+    d="M 136 29 A 92 92 0 0 1 208 98"
+    stroke="url(#chromeArc)"
+    stroke-width="6.5"
+    stroke-linecap="round"
+  />
+  <path
+    d="M 122 212 A 92 92 0 0 1 30 132"
+    stroke="url(#chromeArc)"
+    stroke-width="6.5"
+    stroke-linecap="round"
+  />
+  <path
+    d="M 209 135 A 92 92 0 0 1 128 212"
+    stroke="url(#blueRing)"
+    stroke-width="8"
+    stroke-linecap="round"
+  />
+  <path
+    d="M 194 134 A 78 78 0 0 1 130 198"
+    stroke="#7dd3fc"
+    stroke-opacity="0.7"
+    stroke-width="2.2"
+    stroke-linecap="round"
+  />
+
+  <!-- Stylized C -->
+  <path
+    d="M 123 64 L 99 64 C 66 64 46 88 46 120 C 46 152 66 176 99 176 L 114 176 L 122 153 L 101 153 C 80 153 69 140 69 120 C 69 100 80 87 101 87 L 115 87 L 123 64 Z"
+    fill="url(#greenC)"
+    stroke="#d9f99d"
+    stroke-width="1.6"
+    stroke-linejoin="round"
+  />
+  <path
+    d="M 118 71 L 100 71 C 72 71 55 92 55 120 C 55 148 72 169 100 169"
+    stroke="#ecfccb"
+    stroke-opacity="0.55"
+    stroke-width="2"
+    stroke-linecap="round"
+  />
+
+  <!-- Faceted Chrome A -->
+  <path
+    fill-rule="evenodd"
+    d="M 126 64 L 143 64 L 185 174 L 160 174 L 148 140 L 119 140 L 107 174 L 84 174 L 126 64 Z M 134.5 91 L 123 122 L 146 122 L 134.5 91 Z"
+    fill="url(#chromeA)"
+    stroke="#f8fafc"
+    stroke-opacity="0.85"
+    stroke-width="1.4"
+    stroke-linejoin="round"
+  />
+
+  <!-- Horizontal Metallic Spear Crossbar -->
+  <polygon
+    points="78,120 174,108 218,117 174,122"
+    fill="url(#spearTop)"
+  />
+  <polygon
+    points="78,120 174,122 218,117 174,132"
+    fill="url(#spearBottom)"
+  />
+  <polyline
+    points="78,120 174,108 218,117 174,132 78,120"
+    stroke="#f8fafc"
+    stroke-opacity="0.85"
+    stroke-width="1.2"
+    stroke-linejoin="round"
+  />
+</svg>

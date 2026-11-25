@@ -1,6 +1,154 @@
-import type { SVGProps } from 'react';
+import { useId, type SVGProps } from 'react';
 
 type IconProps = SVGProps<SVGSVGElement>;
+
+export function CodahEmblemMark(props: IconProps) {
+  const uid = useId().replace(/:/g, '');
+  const greenRingId = `ca-green-ring-${uid}`;
+  const blueRingId = `ca-blue-ring-${uid}`;
+  const chromeArcId = `ca-chrome-arc-${uid}`;
+  const greenCId = `ca-green-c-${uid}`;
+  const chromeAId = `ca-chrome-a-${uid}`;
+  const spearTopId = `ca-spear-top-${uid}`;
+  const spearBotId = `ca-spear-bot-${uid}`;
+  const bgId = `ca-bg-${uid}`;
+
+  return (
+    <svg viewBox="0 0 240 240" fill="none" aria-hidden="true" {...props}>
+      <defs>
+        <radialGradient id={bgId} cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#0f1824" />
+          <stop offset="72%" stopColor="#070a10" />
+          <stop offset="100%" stopColor="#050507" />
+        </radialGradient>
+        <linearGradient id={greenRingId} x1="20" y1="30" x2="115" y2="165" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#a3ff33" />
+          <stop offset="48%" stopColor="#22e500" />
+          <stop offset="100%" stopColor="#059669" />
+        </linearGradient>
+        <linearGradient id={blueRingId} x1="120" y1="210" x2="215" y2="120" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#0284c7" />
+          <stop offset="55%" stopColor="#00ccff" />
+          <stop offset="100%" stopColor="#67e8f9" />
+        </linearGradient>
+        <linearGradient id={chromeArcId} x1="100" y1="20" x2="210" y2="120" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#f8fafc" />
+          <stop offset="45%" stopColor="#94a3b8" />
+          <stop offset="100%" stopColor="#334155" />
+        </linearGradient>
+        <linearGradient id={greenCId} x1="48" y1="62" x2="116" y2="176" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#b4ff4d" />
+          <stop offset="45%" stopColor="#22e500" />
+          <stop offset="100%" stopColor="#047857" />
+        </linearGradient>
+        <linearGradient id={chromeAId} x1="108" y1="64" x2="168" y2="174" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#ffffff" />
+          <stop offset="40%" stopColor="#cbd5e1" />
+          <stop offset="78%" stopColor="#475569" />
+          <stop offset="100%" stopColor="#38bdf8" />
+        </linearGradient>
+        <linearGradient id={spearTopId} x1="78" y1="115" x2="218" y2="115" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#64748b" />
+          <stop offset="45%" stopColor="#ffffff" />
+          <stop offset="100%" stopColor="#cbd5e1" />
+        </linearGradient>
+        <linearGradient id={spearBotId} x1="78" y1="125" x2="218" y2="125" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#1e293b" />
+          <stop offset="60%" stopColor="#475569" />
+          <stop offset="100%" stopColor="#94a3b8" />
+        </linearGradient>
+      </defs>
+
+      <circle cx="120" cy="120" r="115" fill={`url(#${bgId})`} />
+
+      <path
+        d="M 28 124 A 92 92 0 0 1 132 29"
+        stroke={`url(#${greenRingId})`}
+        strokeWidth="7.5"
+        strokeLinecap="round"
+      />
+      <path
+        d="M 42 126 A 78 78 0 0 1 124 42"
+        stroke="#86efac"
+        strokeOpacity="0.65"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+      />
+      <path
+        d="M 136 29 A 92 92 0 0 1 208 98"
+        stroke={`url(#${chromeArcId})`}
+        strokeWidth="6.5"
+        strokeLinecap="round"
+      />
+      <path
+        d="M 122 212 A 92 92 0 0 1 30 132"
+        stroke={`url(#${chromeArcId})`}
+        strokeWidth="6.5"
+        strokeLinecap="round"
+      />
+      <path
+        d="M 209 135 A 92 92 0 0 1 128 212"
+        stroke={`url(#${blueRingId})`}
+        strokeWidth="8"
+        strokeLinecap="round"
+      />
+      <path
+        d="M 194 134 A 78 78 0 0 1 130 198"
+        stroke="#7dd3fc"
+        strokeOpacity="0.7"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+      />
+
+      <path
+        d="M 123 64 L 99 64 C 66 64 46 88 46 120 C 46 152 66 176 99 176 L 114 176 L 122 153 L 101 153 C 80 153 69 140 69 120 C 69 100 80 87 101 87 L 115 87 L 123 64 Z"
+        fill={`url(#${greenCId})`}
+        stroke="#d9f99d"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M 118 71 L 100 71 C 72 71 55 92 55 120 C 55 148 72 169 100 169"
+        stroke="#ecfccb"
+        strokeOpacity="0.55"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+
+      <path
+        fillRule="evenodd"
+        d="M 126 64 L 143 64 L 185 174 L 160 174 L 148 140 L 119 140 L 107 174 L 84 174 L 126 64 Z M 134.5 91 L 123 122 L 146 122 L 134.5 91 Z"
+        fill={`url(#${chromeAId})`}
+        stroke="#f8fafc"
+        strokeOpacity="0.85"
+        strokeWidth="1.4"
+        strokeLinejoin="round"
+      />
+
+      <polygon points="78,120 174,108 218,117 174,122" fill={`url(#${spearTopId})`} />
+      <polygon points="78,120 174,122 218,117 174,132" fill={`url(#${spearBotId})`} />
+      <polyline
+        points="78,120 174,108 218,117 174,132 78,120"
+        stroke="#f8fafc"
+        strokeOpacity="0.85"
+        strokeWidth="1.2"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+export function CodahFullLogo({ className = '' }: { className?: string }) {
+  return (
+    <div className={`inline-flex flex-col items-center justify-center ${className}`}>
+      <CodahEmblemMark className="w-24 h-24 sm:w-28 sm:h-28" />
+      <div className="mt-2 font-display text-sm sm:text-base font-bold tracking-[0.18em] leading-none whitespace-nowrap">
+        <span className="text-[#4dff33]">CODAH</span>{' '}
+        <span className="text-[#00ccff]">ABIUDE</span>
+      </div>
+    </div>
+  );
+}
 
 export function GitHubLogo(props: IconProps) {
   return (
@@ -41,6 +189,14 @@ export function FacebookLogo(props: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" {...props}>
       <path d="M13.6 21v-8.2h2.75l.41-3.2H13.6V7.56c0-.93.26-1.56 1.59-1.56h1.7V3.14c-.29-.04-1.3-.14-2.47-.14-2.45 0-4.12 1.49-4.12 4.23v2.37H7.53v3.2h2.77V21h3.3Z" />
+    </svg>
+  );
+}
+
+export function XLogo(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" {...props}>
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.451-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z" />
     </svg>
   );
 }

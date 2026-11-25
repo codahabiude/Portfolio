@@ -1,6 +1,7 @@
 import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import type { SectionId } from '../types/portfolio.ts';
+import { CodahEmblemMark } from './BrandMarks.tsx';
 
 interface NavbarProps {
   activeSection: SectionId;
@@ -31,12 +32,7 @@ export function Navbar({ activeSection, onNavigate }: NavbarProps) {
           onClick={() => handleSelect('home')}
           className="inline-flex items-center gap-3 text-left whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--accent)]"
         >
-          <img
-            src="/assets/aistudio/codah_logo_47519e04.png"
-            alt="Codah Abiude emblem"
-            referrerPolicy="no-referrer"
-            className="w-9 h-9 rounded-full object-cover bg-white/95 p-0.5 shrink-0"
-          />
+          <CodahEmblemMark className="w-11 h-11 shrink-0 drop-shadow-[0_0_12px_rgba(34,229,0,0.28)]" />
           <span className="font-display text-lg font-bold tracking-tight text-white">
             Codah Abiude
           </span>

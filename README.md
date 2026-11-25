@@ -4,8 +4,8 @@ A high-efficiency, full-stack 3D portfolio web application built for **Codah Abi
 
 ## Key Features
 
-- **Real-Time 3D Gyroscopic Core & Spatial Grid (`Three.js` / `WebGL 2`)**
-  - Procedural 8-part 3D centerpiece (`THREE.Group`) with `RoomEnvironment` PMREM studio reflections, anodized metallic/carbon material contrast, instanced orbital beacon nodes (`InstancedMesh`), and a procedural spatial grid floor.
+- **Real-Time 3D `CA` Logo Sphere & Spatial Grid (`Three.js` / `WebGL 2`)**
+  - Procedural 3D rotating logo globe featuring extruded beveled emerald `C`, brushed-chrome `A` with spear crossbar, tri-color logo arcs, and a `"CODAH ABIUDE"` orbital nameplate band & plaques (`RoomEnvironment` PMREM reflections + 24 instanced emerald/blue beacon nodes).
   - Hardware-adaptive software WebGL guard (`isSoftwareGl`) with `afterDraw` GPU fence pacing and zero per-frame garbage collection allocations.
   - Automatic section-reactive camera choreography, pointer parallax, and dynamic lighting spectrum transitions.
 - **Full-Stack Express + Vite Backend (`server.ts`)**
@@ -16,7 +16,7 @@ A high-efficiency, full-stack 3D portfolio web application built for **Codah Abi
 - **Selected Works & Live GitHub Sync (`github.com/codahabiude`)**
   - Filterable showcase powered directly by Codah Abiude's public GitHub repositories (**Nakoyonjo Admin System**, **LanVox**, and **3D Web Portfolio**), synchronized via `GET /api/portfolio?sync=1` with 3D pointer-tilt cards, source links, and interactive case study modal inspection.
 - **Personal Collaboration, Smart-Art Workflow & Visual Brand Logos**
-  - Interactive 4-stage Smart-Art architectural workflow diagram (`ArchitectureSmartArt.tsx`), vector technology stack marks, direct social/contact logos (GitHub, LinkedIn, Instagram, Facebook, `codahabiude@gmail.com`), and inquiry reference ID tracking.
+  - Interactive 4-stage Smart-Art architectural workflow diagram (`ArchitectureSmartArt.tsx`), vector technology stack marks, and direct social/contact logos (GitHub, LinkedIn, X `@CodahAbiude`, Instagram, Facebook, `codahabiude@gmail.com`).
 
 ## Tech Stack
 
@@ -29,16 +29,16 @@ A high-efficiency, full-stack 3D portfolio web application built for **Codah Abi
 ```text
 ├── server.ts                          # Express API server & Vite middleware / static host
 ├── index.html                         # Entry HTML & Google Fonts
-├── public/assets/aistudio/            # Portrait & CA emblem assets
+├── public/assets/                     # Portrait, crisp vector CA favicon SVG, and brand assets
 ├── src/
 │   ├── App.tsx                        # Main portfolio experience & API integrations
 │   ├── index.css                      # Tailwind v4 & typography tokens
 │   ├── types/portfolio.ts             # Shared TypeScript interfaces
 │   ├── assets/images/                 # Generated showcase artwork
 │   └── components/
-│       ├── ThreePortfolioScene.tsx    # Hardware-adaptive Three.js 3D viewport
+│       ├── ThreePortfolioScene.tsx    # Hardware-adaptive Three.js 3D CA logo sphere viewport
 │       ├── ArchitectureSmartArt.tsx   # Interactive 4-stage Smart-Art schematic & stack logos
-│       ├── BrandMarks.tsx             # Vector brand & technology stack logos
+│       ├── BrandMarks.tsx             # Vector CA brand logos, social marks & tech stack SVGs
 │       ├── Navbar.tsx                 # 3-zone top bar & mobile drawer
 │       ├── ProjectCard.tsx            # 3D-tilt showcase card
 │       └── ProjectModal.tsx           # Interactive case study modal
