@@ -8,9 +8,10 @@ A high-efficiency, full-stack 3D portfolio web application built for **Codah Abi
   - Procedural 3D rotating logo globe featuring extruded beveled emerald `C`, brushed-chrome `A` with spear crossbar, tri-color logo arcs, and a `"CODAH ABIUDE"` orbital nameplate band & plaques (`RoomEnvironment` PMREM reflections + 24 instanced emerald/blue beacon nodes).
   - Hardware-adaptive software WebGL guard (`isSoftwareGl`) with `afterDraw` GPU fence pacing, portrait-aspect responsive camera framing, and zero per-frame garbage collection allocations.
   - Automatic section-reactive camera choreography, pointer parallax, and dynamic lighting spectrum transitions.
-- **Full-Stack Express + Vite Backend (`server.ts`)**
-  - `GET /api/portfolio`: Serves portfolio projects, services, and capability metrics from persistent server storage (`data/portfolio-store.json`).
-  - `POST /api/projects/:id/view` & `POST /api/projects/:id/appreciate`: Persists real project view and appreciation counts atomically.
+- **Full-Stack Express + Vercel Serverless APIs (`server.ts` & `api/`)**
+  - `GET /api/portfolio`: Serves portfolio projects, services, and capability metrics, syncing live repository metadata from `github.com/codahabiude`.
+  - `GET /api/github/contributions`: Fetches and parses `@codahabiude`'s live GitHub contribution calendar for the interactive heatmap.
+  - `POST /api/projects/:id/view` & `POST /api/projects/:id/appreciate`: Persists project view and appreciation counts.
   - `POST /api/inquiries`: Validates, rate-limits, and stores client project requests, issuing a unique tracking reference ID (`REQ-2026-XXXXXX`).
 - **Selected Works & Live GitHub Sync (`github.com/codahabiude`)**
   - Filterable showcase powered directly by Codah Abiude's public GitHub repositories (**Nakoyonjo Admin System**, **LanVox**, and **3D Web Portfolio**), synchronized via `GET /api/portfolio?sync=1` with 3D pointer-tilt cards, source links, and interactive case study modal inspection.
@@ -27,9 +28,16 @@ A high-efficiency, full-stack 3D portfolio web application built for **Codah Abi
 ## Project Structure
 
 ```text
-├── server.ts                          # Express API server & Vite middleware / static host
-├── index.html                         # Entry HTML & Google Fonts
-├── public/assets/                     # Portrait, crisp vector CA favicon SVG, and brand assets
+├── server.ts                             # Express API server & Vite middleware / static host
+├── vercel.json                           # Vercel Vite + /api serverless build config
+├── api/                                  # Vercel Serverless Functions (/api/*)
+│   ├── _lib/portfolioCore.ts             # Shared GitHub sync, scraper & persistence logic
+│   ├── portfolio.ts                      # GET /api/portfolio
+│   ├── github/contributions.ts           # GET /api/github/contributions
+│   ├── inquiries.ts                      # POST /api/inquiries
+│   └── projects/[id]/                    # POST /api/projects/:id/view & appreciate
+├── index.html                            # Entry HTML & Google Fonts
+├── public/assets/                        # Portrait, crisp vector CA favicon SVG, and brand assets
 ├── src/
 │   ├── App.tsx                        # Main portfolio experience & API integrations
 │   ├── index.css                      # Tailwind v4 & typography tokens
