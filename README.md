@@ -15,6 +15,7 @@ A high-efficiency, full-stack 3D portfolio web application built for **Codah Abi
   - `GET /api/inquiries/status/:refId`: Verifies inquiry receipt status without exposing sensitive submitter details.
 - **Selected Works & Live GitHub Sync (`github.com/codahabiude`)**
   - Filterable showcase powered directly by Codah Abiude's public GitHub repositories (**Nakoyonjo Admin System**, **LanVox**, and **3D Web Portfolio**), synchronized via `GET /api/portfolio?sync=1` with 3D pointer-tilt cards, source links, and interactive case study modal inspection.
+  - Interactive **GitHub Contribution Heatmap** (`GET /api/github/contributions` & `GitHubContributionHeatmap.tsx`) displaying `@codahabiude`'s live 53-week commit calendar, streak metrics, day-by-day activity inspector, and intensity-level filtering inside the About section.
 - **Personal Collaboration, Smart-Art Workflow & Visual Brand Logos**
   - Interactive 4-stage Smart-Art architectural workflow diagram (`ArchitectureSmartArt.tsx`), vector technology stack marks, and direct social/contact logos (GitHub, LinkedIn, X `@CodahAbiude`, Instagram, Facebook, `codahabiude@gmail.com`).
 
@@ -36,12 +37,13 @@ A high-efficiency, full-stack 3D portfolio web application built for **Codah Abi
 │   ├── types/portfolio.ts             # Shared TypeScript interfaces
 │   ├── assets/images/                 # Generated showcase artwork
 │   └── components/
-│       ├── ThreePortfolioScene.tsx    # Hardware-adaptive Three.js 3D CA logo sphere viewport
-│       ├── ArchitectureSmartArt.tsx   # Interactive 4-stage Smart-Art schematic & stack logos
-│       ├── BrandMarks.tsx             # Vector CA brand logos, social marks & tech stack SVGs
-│       ├── Navbar.tsx                 # 3-zone top bar & mobile drawer
-│       ├── ProjectCard.tsx            # 3D-tilt showcase card
-│       └── ProjectModal.tsx           # Interactive case study modal
+│       ├── ThreePortfolioScene.tsx       # Hardware-adaptive Three.js 3D CA logo sphere viewport
+│       ├── GitHubContributionHeatmap.tsx # Live interactive @codahabiude GitHub activity heatmap
+│       ├── ArchitectureSmartArt.tsx      # Interactive 4-stage Smart-Art schematic & stack logos
+│       ├── BrandMarks.tsx                # Vector CA brand logos, social marks & tech stack SVGs
+│       ├── Navbar.tsx                    # 3-zone top bar & mobile drawer
+│       ├── ProjectCard.tsx               # 3D-tilt showcase card
+│       └── ProjectModal.tsx              # Interactive case study modal
 └── data/                              # Auto-created JSON persistence store
 ```
 

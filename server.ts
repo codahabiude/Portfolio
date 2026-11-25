@@ -8,6 +8,8 @@ import type { Request, Response, NextFunction } from 'express';
 import { createServer as createViteServer } from 'vite';
 import type {
   CapabilityMetric,
+  GitHubContributionDay,
+  GitHubContributionsPayload,
   PortfolioProject,
   ServiceItem,
 } from './src/types/portfolio.ts';
@@ -228,6 +230,8 @@ const inquiryRateMap = new Map<string, number[]>();
 let cachedGithubRepos: GitHubRepoApiItem[] | null = null;
 let cachedGithubAt = 0;
 let lastSyncIso: string | null = null;
+let cachedContributions: GitHubContributionsPayload | null = null;
+let cachedContributionsAt = 0;
 const GITHUB_CACHE_TTL_MS = 10 * 60 * 1000;
 
 async function fetchLiveGithubRepos(force = false): Promise<GitHubRepoApiItem[] | null> {
@@ -260,6 +264,116 @@ async function fetchLiveGithubRepos(force = false): Promise<GitHubRepoApiItem[] 
     return cachedGithubRepos;
   } catch {
     return cachedGithubRepos;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+function parseGithubContributionsHtml(html: string): GitHubContributionsPayload | null {
+  const totalMatch = html.match(/(\d[\d,]*)\s+contributions?\s+in the last year/i);
+  const parsedHeaderTotal = totalMatch
+    ? Number.parseInt(totalMatch[1].replace(/,/g, ''), 10)
+    : 0;
+
+  const cellRegex =
+    /<td\b([^>]*data-date="(\d{4}-\d{2}-\d{2})"[^>]*)>(?:\s*<tool-tip[^>]*>([^<]*)<\/tool-tip>)?/gi;
+
+  const dayMap = new Map<string, GitHubContributionDay>();
+  let match: RegExpExecArray | null;
+  while ((match = cellRegex.exec(html)) !== null) {
+    const attrs = match[1];
+    const dateStr = match[2];
+    const tooltipText = (match[3] || '').trim();
+
+    const levelMatch = attrs.match(/data-level="([0-4])"/i);
+    const levelNum = levelMatch ? Number.parseInt(levelMatch[1], 10) : 0;
+    const level = (levelNum >= 0 && levelNum <= 4 ? levelNum : 0) as 0 | 1 | 2 | 3 | 4;
+
+    let count = 0;
+    const countMatch = tooltipText.match(/^(\d+)\s+contribution/i);
+    if (countMatch) {
+      count = Number.parseInt(countMatch[1], 10);
+    } else if (/^no contributions/i.test(tooltipText)) {
+      count = 0;
+    } else if (level > 0) {
+      count = level;
+    }
+
+    const weekday = new Date(`${dateStr}T00:00:00Z`).getUTCDay();
+    dayMap.set(dateStr, { date: dateStr, count, level, weekday });
+  }
+
+  if (dayMap.size === 0) return null;
+
+  const days = Array.from(dayMap.values()).sort((a, b) => a.date.localeCompare(b.date));
+
+  let activeDays = 0;
+  let sumCounts = 0;
+  let longestStreak = 0;
+  let runningStreak = 0;
+
+  for (const day of days) {
+    sumCounts += day.count;
+    if (day.count > 0 || day.level > 0) {
+      activeDays += 1;
+      runningStreak += 1;
+      if (runningStreak > longestStreak) longestStreak = runningStreak;
+    } else {
+      runningStreak = 0;
+    }
+  }
+
+  // Current streak ending today (or yesterday if today has 0 commits so far)
+  let currentStreak = 0;
+  for (let i = days.length - 1; i >= 0; i--) {
+    const d = days[i];
+    if (d.count > 0 || d.level > 0) {
+      currentStreak += 1;
+    } else if (i === days.length - 1) {
+      continue;
+    } else {
+      break;
+    }
+  }
+
+  return {
+    username: GITHUB_USER,
+    profileUrl: GITHUB_PROFILE_URL,
+    totalContributions: Math.max(parsedHeaderTotal, sumCounts),
+    activeDays,
+    longestStreak,
+    currentStreak,
+    fetchedAt: new Date().toISOString(),
+    days,
+  };
+}
+
+async function fetchGithubContributions(
+  force = false
+): Promise<GitHubContributionsPayload | null> {
+  const now = Date.now();
+  if (!force && cachedContributions && now - cachedContributionsAt < GITHUB_CACHE_TTL_MS) {
+    return cachedContributions;
+  }
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 4500);
+  try {
+    const res = await fetch(`https://github.com/users/${GITHUB_USER}/contributions`, {
+      headers: {
+        'User-Agent': 'codahabiude-portfolio-server',
+        Accept: 'text/html',
+      },
+      signal: controller.signal,
+    });
+    if (!res.ok) return cachedContributions;
+    const html = await res.text();
+    const parsed = parseGithubContributionsHtml(html);
+    if (!parsed) return cachedContributions;
+    cachedContributions = parsed;
+    cachedContributionsAt = now;
+    return parsed;
+  } catch {
+    return cachedContributions;
   } finally {
     clearTimeout(timeout);
   }
@@ -444,6 +558,22 @@ async function startServer(): Promise<void> {
       });
     } catch {
       res.status(500).json({ error: 'Unable to load portfolio catalog.' });
+    }
+  });
+
+  app.get('/api/github/contributions', async (req, res) => {
+    const forceSync = req.query.sync === '1';
+    try {
+      const payload = await fetchGithubContributions(forceSync);
+      if (!payload) {
+        res.status(502).json({
+          error: 'Unable to fetch GitHub contribution calendar right now.',
+        });
+        return;
+      }
+      res.json(payload);
+    } catch {
+      res.status(500).json({ error: 'Failed to load GitHub contributions.' });
     }
   });
 

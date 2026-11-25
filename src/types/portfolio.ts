@@ -81,3 +81,22 @@ export interface SceneControlState {
   spectrumMode: SceneSpectrumMode;
   wireframeOverlay: boolean;
 }
+
+export interface GitHubContributionDay {
+  date: string;
+  count: number;
+  level: 0 | 1 | 2 | 3 | 4;
+  weekday: number;
+}
+
+export interface GitHubContributionsPayload {
+  username: string;
+  profileUrl: string;
+  totalContributions: number;
+  activeDays: number;
+  longestStreak: number;
+  currentStreak: number;
+  fetchedAt: string;
+  days: GitHubContributionDay[];
+}
+

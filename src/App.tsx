@@ -16,6 +16,7 @@ import {
   LinkedInLogo,
   XLogo,
 } from './components/BrandMarks.tsx';
+import { GitHubContributionHeatmap } from './components/GitHubContributionHeatmap.tsx';
 import { Navbar } from './components/Navbar.tsx';
 import { ProjectCard } from './components/ProjectCard.tsx';
 import { ProjectModal } from './components/ProjectModal.tsx';
@@ -728,6 +729,7 @@ export default function App() {
             </div>
           </div>
 
+          <GitHubContributionHeatmap />
           <ArchitectureSmartArt />
         </section>
 
